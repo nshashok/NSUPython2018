@@ -10,7 +10,8 @@ def get_files_list(path: str):
             file_size = os.stat(entry_path).st_size
             files.append((entry_name, file_size))
 
-    files.sort(key=lambda entry: (entry[1], entry[0]), reverse=True)
+    files.sort(key=lambda entry: entry[0])
+    files.sort(key=lambda entry: entry[1], reverse=True)
     return files
 
 
