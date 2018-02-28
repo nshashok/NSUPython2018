@@ -16,8 +16,9 @@ def primes(n: int):
             for j in range(p+p-2, n-1, p):
                 sieve[j] = -abs(sieve[j])
     except StopIteration:
-        return (x for x in sieve if x > 0)
-    return sieve
+        pass
+    return (x for x in sieve if x > 0)
 
 
-primes(int(argv[1]))
+if __name__ == "__main__":
+    print(*primes(int(argv[1])))

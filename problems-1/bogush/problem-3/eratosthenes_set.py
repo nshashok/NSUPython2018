@@ -17,8 +17,9 @@ def primes(n: int):
                 if j in sieve:
                     sieve.remove(j)
     except StopIteration:
-        return (x for x in sieve if x > 0)
-    return sieve
+        pass
+    return (x for x in sieve if x > 0)
 
 
-primes(int(argv[1]))
+if __name__ == "__main__":
+    print(*primes(int(argv[1])))
