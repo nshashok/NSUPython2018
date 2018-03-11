@@ -6,7 +6,7 @@ def prime_factors(n):
     factors = []
     current_factor = 2
     max_factor = math.ceil(math.sqrt(n))
-    while current_factor < max_factor:
+    while n != 1 and current_factor < max_factor:
         degree = 0
         while n % current_factor == 0:
             n //= current_factor
