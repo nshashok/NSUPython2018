@@ -66,13 +66,19 @@ class TestEratosthenes(unittest.TestCase):
     N = 10_000_000
 
     def test_list(self):
-        self.assertTrue(all(is_prime(i) for i in eratosthenes_list(self.n)))
+        self.assertTrue(all((not is_prime(i) and i not in eratosthenes_list(self.n)) or
+                            (is_prime(i) and i in eratosthenes_list(self.n))
+                            for i in range(self.n)))
 
     def test_set(self):
-        self.assertTrue(all(is_prime(i) for i in eratosthenes_set(self.n)))
+        self.assertTrue(all((not is_prime(i) and i not in eratosthenes_set(self.n)) or
+                            (is_prime(i) and i in eratosthenes_set(self.n))
+                            for i in range(self.n)))
 
     def test_bitarray(self):
-        self.assertTrue(all(is_prime(i) for i in eratosthenes_bitarray(self.n)))
+        self.assertTrue(all((not is_prime(i) and i not in eratosthenes_bitarray(self.n)) or
+                            (is_prime(i) and i in eratosthenes_bitarray(self.n))
+                            for i in range(self.n)))
 
 
 if __name__ == "__main__":
