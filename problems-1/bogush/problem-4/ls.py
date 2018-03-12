@@ -1,5 +1,6 @@
 import argparse
 import os
+import sys
 
 
 def ls(directory):
@@ -15,13 +16,15 @@ def main():
     parser.add_argument('dir', type=str, default='.')
     a = parser.parse_args()
     if not os.path.isdir(a.dir):
+        print(a.dir, 'is not a directory', file=sys.stderr)
         parser.print_help()
-        return
+        sys.exit(1)
     try:
         for file, size in ls(a.dir):
             print(file, size, sep='\t')
     except Exception as e:
-        print(e)
+        print(e, file=sys.stderr)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
