@@ -6,9 +6,8 @@ def ls(directory):
     names = os.listdir(directory)
     paths = (os.path.join(directory, name) for name in names)
     files = (path for path in paths if os.path.isfile(path))
-    files = sorted(sorted(files), key=lambda file: os.stat(file).st_size)
-    files = map(os.path.basename, files)
-    return files
+    files_and_sizes = ((os.path.basename(file), os.stat(file).st_size) for file in files)
+    return sorted(files_and_sizes, key=lambda fs: (-fs[1], fs[0]))
 
 
 def main():
@@ -17,7 +16,12 @@ def main():
     a = parser.parse_args()
     if not os.path.isdir(a.dir):
         parser.print_help()
-    print(*ls(a.dir), sep='\n')
+        return
+    try:
+        for file, size in ls(a.dir):
+            print(file, size, sep='\t')
+    except Exception as e:
+        print(e)
 
 
 if __name__ == "__main__":
