@@ -16,7 +16,7 @@ def get_files_list(path):
 
 def main():
     if len(sys.argv) < 2:
-        print("Name of directory was not found.")
+        print("Name of directory was not found.", file=sys.stderr)
     else:
         try:
             file_list = get_files_list(sys.argv[1])
@@ -26,7 +26,7 @@ def main():
                 for name, size in file_list:
                     print("name:", name + ',', "size:", size)
         except Exception as e:
-            print(e)
+            print(e, file=sys.stderr)
 
 
 if __name__ == "__main__":
