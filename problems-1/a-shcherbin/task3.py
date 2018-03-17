@@ -17,7 +17,6 @@ def eratosthen_set(number) -> set:
     s = set(range(2, number + 1))
     max = math.ceil(math.sqrt(number))
     for candidate in range(2, max):
-        print(candidate)
         if candidate in s:
             for cur in range(candidate * 2, number + 1, candidate):
                 s.discard(cur)
