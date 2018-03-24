@@ -1,3 +1,6 @@
+import sys
+
+
 def prime_factors(n):
     dd = 2
     nn = n
@@ -11,3 +14,12 @@ def prime_factors(n):
             fact.append([dd, c])
         dd += 1
     return fact
+
+if __name__ == "__main__":
+    while True:
+        try:
+            num = input("Enter num: ")
+            print(prime_factors(int(num)))
+            break
+        except ValueError:
+            print("\tCan't parse value", file=sys.stderr)
