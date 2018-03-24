@@ -18,7 +18,7 @@ def get_bytes(filename):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: " + __file__ + " directory_name")
+        print("Usage: " + __file__ + " file_name")
     else:
         try:
             print(get_bytes(sys.argv[1]))
