@@ -43,8 +43,20 @@ def count_distance(frequency_dict):
 
     for i in encodings_distances:
         for key, freq in frequency_dict.items():
-            symbol = bytes([key]).decode(i).lower()
-            encodings_distances[i] += (freq - frequencies.get(symbol, 0)) ** 2
+            symbol = bytes([key]).decode(i)
+            try:
+                if symbol.isupper():
+                    if ord(symbol.lower().encode(i)) not in frequency_dict:
+                        encodings_distances[i] += (freq - frequencies.get(symbol.lower(), 0)) ** 2
+                elif symbol.islower():
+                    if ord(symbol.upper().encode(i)) in frequency_dict:
+                        encodings_distances[i] += (frequency_dict[ord(symbol.upper().encode(i))] + freq - frequencies.get(symbol.lower(), 0)) ** 2
+                    else:
+                        encodings_distances[i] += (freq - frequencies.get(symbol, 0)) ** 2
+                else:
+                    encodings_distances[i] += (freq - frequencies.get(symbol, 0)) ** 2
+            except UnicodeEncodeError:
+                encodings_distances[i] += (freq - frequencies.get(symbol, 0)) ** 2
         encodings_distances[i] = sqrt(encodings_distances[i])
 
     return encodings_distances
@@ -60,6 +72,7 @@ if __name__ == "__main__":
                 print("This file doesn't contains non-ascii symbols:", sys.argv[1])
             else:
                 distances = count_distance(freq_dict)
+                print(distances)
                 predicted_encoding = min(distances.items(), key=lambda x: x[1])[0]
                 print("Predicted encoding:", predicted_encoding)
                 print(codecs.open(sys.argv[1], encoding=predicted_encoding).read())
