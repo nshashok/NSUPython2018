@@ -1,17 +1,19 @@
-def inputNumber():
+# coding: utf8
 
+import sys
+
+
+def inputNumber():
     print("Введите число:")
 
-    while(True):
+    for line in sys.stdin:
         try:
-            line = input()
-            int(line)
-            return
-        except EOFError:
-            print("Ну и ладно")
+            i = int(line)
+            print(i)
             return
         except ValueError:
             print("Это не число")
+
 
 if __name__ == '__main__':
     inputNumber()
