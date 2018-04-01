@@ -1,4 +1,4 @@
-#!/bin/python
+#!/bin/python3
 
 import sys
 
@@ -6,17 +6,17 @@ def get_freq(filename):
 	stats = {}
 	n = 0
 
-	with open(filename, "rb") as f:
-		byte = f.read(1)
-		while byte:
-			a = int.from_bytes(byte, 'little')
-			if (a > 127):
-				if a in stats:
-					stats[a][0] += 1
-				else:
-					stats[a] = [1, 0]
-				n += 1
-			byte = f.read(1)
+	with open(filename, "rb", 8192) as f:
+		bytes = f.read(1024)
+		while bytes:
+			for byte in bytes:
+				if (byte > 127):
+					if byte in stats:
+						stats[byte][0] += 1
+					else:
+						stats[byte] = [1, 0]
+					n += 1
+			bytes = f.read(1024)
 
 	for k, v in stats.items():
 		v[1] = v[0]*(100/n)
