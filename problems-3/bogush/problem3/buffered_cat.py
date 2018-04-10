@@ -1,21 +1,20 @@
 #!/usr/local/bin/python3
 from sys import argv
 from argparse import ArgumentParser
-from typing import IO
+from file_buffer import file_buffer
 
 
-def chars(fp: IO, buff_size: int=5):
-    while True:
-        read_bytes = fp.read(buff_size)
-        if len(read_bytes) == 0:
-            return
-        if 'b' not in fp.mode:
-            read_bytes = read_bytes.encode()
-        for byte in read_bytes:
-            yield chr(byte)
+def chars(fp):
+    buffer = file_buffer(fp)
+    if 'b' in fp.mode:
+        for byte in buffer:
+            yield byte
+    else:
+        for char in buffer:
+            yield char
 
 
-def process(fp):
+def buffered_cat(fp):
     for char in chars(fp):
         print(char, end='')
 
@@ -28,7 +27,7 @@ def main():
     args = arg_parser.parse_args(argv[1:])
     try:
         with open(args.file, args.mode) as fp:
-            process(fp)
+            buffered_cat(fp)
     except Exception as e:
         print(e)
         exit(1)
