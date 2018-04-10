@@ -1,26 +1,49 @@
-#!/bin/python
+#!/bin/python3
 
 import types
 import collections
 
 class Vector(object):
 	"""My Vector class for n-dimensional math vector"""
+	
+	def __is_int(self, num):
+		try:
+			int(num)
+			return True
+		except ValueError:
+			return False
 
-	def setVector(self, v):
-		r"""Initializes a vector with an array_like values,
-		generators, collections.
+	def __is_float(self, num):
+		try:
+			float(num)
+			return True
+		except ValueError:
+			return False
 
-		Parameters
-		----------
-		v: array_like, generators, collections
-			Array_like -- lists, tuples, etc.
-		"""
+	def __is_complex(self, num):
+		try:
+			complex(num)
+			return True
+		except ValueError:
+			return False
+
+	def __setVector(self, v):
 		m = 0
 		mtype = int
 		if (isinstance(v, types.GeneratorType) or
 			isinstance(v, collections.Collection)):
-			self.__vector = list(v)
-			for num in self.__vector:
+			self._vector = list(v)
+			for num in self._vector:
+				if (isinstance(num, str)):
+					if self.__is_int(num):
+						num = int(num)
+					elif self.__is_float(num):
+						num = float(num)
+					elif self.__is_complex(num):
+						num = complex(num)
+					else:
+						raise TypeError("Invalid type")
+
 				if (isinstance(num, int)):
 					pass
 				elif (isinstance(num, float) and m < 1):
@@ -31,13 +54,21 @@ class Vector(object):
 					m = 2
 				else:
 					raise TypeError("Invalid type")
-			self.__vector = list(map(mtype, self.__vector))
-			self._dim = len(self.__vector)
+			self._vector = list(map(mtype, self._vector))
+			self._dim = len(self._vector)
 		else:
 			raise TypeError("Invalid type")
 			
 	def __init__(self, v):
-		self.setVector(v)
+		r"""Initializes a vector with an array_like values,
+		generators, collections.
+
+		Parameters
+		----------
+		v: array_like, generators, collections
+			Array_like -- lists, tuples, etc.
+		"""
+		self.__setVector(v)
 
 	def magnitude(self):
 		r"""Vector magnitude
@@ -47,7 +78,7 @@ class Vector(object):
 		type
 			float or int
 		"""
-		return sum(map((lambda x: x**2), self.__vector)) ** .5
+		return sum(map((lambda x: x**2), self._vector)) ** .5
 		
 	def getDimension(self):
 		"""Vector dimension, number of coordinates
@@ -74,7 +105,7 @@ class Vector(object):
 			In case of different vector dimensions
 		"""
 		if (self._dim == b._dim):
-			return Vector([x + y for x, y in zip(self.__vector, b.__vector)])
+			return Vector([x + y for x, y in zip(self._vector, b._vector)])
 		else:
 			raise ValueError("Invalid dimension")
 
@@ -95,7 +126,7 @@ class Vector(object):
 			In case of different vector dimensions
 		"""
 		if (self._dim == b._dim):
-			return Vector([x - y for x, y in zip(self.__vector, b.__vector)])
+			return Vector([x - y for x, y in zip(self._vector, b._vector)])
 		else:
 			raise ValueError("Invalid dimension")
 
@@ -119,10 +150,10 @@ class Vector(object):
 			In case of unknown type
 		"""
 		if (isinstance(b, (int, float, complex))):
-				return Vector(list(map((lambda x: x*b), self.__vector))) # vector*const
+				return Vector(list(map((lambda x: x*b), self._vector))) # vector*const
 		elif (isinstance(b, Vector)):
 			if (self._dim == b._dim):
-				return sum([x*y for x, y in zip(self.__vector, b.__vector)]) # dot product
+				return sum([x*y for x, y in zip(self._vector, b._vector)]) # dot product
 			else:
 				raise ValueError("Different dimensions")
 		else:
@@ -141,7 +172,7 @@ class Vector(object):
 			False, otherwise
 		"""
 		if (self._dim == b._dim):
-			for x, y in zip(self.__vector, b.__vector):
+			for x, y in zip(self._vector, b._vector):
 				if (x != y):
 					return False
 			return True
@@ -159,7 +190,7 @@ class Vector(object):
 		type
 			int, float
 		"""
-		return self.__vector[i]
+		return self._vector[i]
 
 	def __str__(self):
 		"""Returns string representation of a vector
@@ -169,28 +200,30 @@ class Vector(object):
 		type
 			string
 		"""
-		return str(self.__vector)
+		return str(self._vector)
 
 class Vector3D(Vector):
 	"""My Vector class for 3-dimensional math vector"""
 	def __init__(self, v):
-		super().__init__(v)
+		super(Vector3D, self).__init__(v)
 		if (self._dim != 3):
 			raise ValueError("Invalid dimension")
 
 	def dotprod(self, b):
 		if (self._dim == b._dim):
-			return sum([x*y for x, y in zip(self.__vector, b.__vector)])
+			return Vector3D([self._vector[1]*b._vector[2] - self._vector[2]*b._vector[1],
+							 self._vector[2]*b._vector[0] - self._vector[0]*b._vector[2],
+							 self._vector[0]*b._vector[1] - self._vector[1]*b._vector[0]])
 		else:
 			raise ValueError("Invalid dimension")
 
 if __name__ == "__main__":
 	a = Vector([1,2,complex(1)])
-	b = Vector((1,2,3))
+	b = Vector3D((1,"2",3))
 	c = Vector((i for i in (1,2,3)))
 	m = Vector([complex(1,2), complex(2,3), complex(3,5)])
-	g = Vector3D((1,2,3))
-	print(g*b)
+	g = Vector3D((1,2,"3"))
+	print(g.dotprod(b))
 	print(a*b)
 	print(b*c)
 	print(m.magnitude())
