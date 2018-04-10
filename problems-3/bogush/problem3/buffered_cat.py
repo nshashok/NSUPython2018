@@ -6,13 +6,12 @@ from typing import IO
 
 def chars(fp: IO, buff_size: int=5):
     while True:
-        bytes = fp.read(buff_size)
-        if len(bytes) == 0:
+        read_bytes = fp.read(buff_size)
+        if len(read_bytes) == 0:
             return
         if 'b' not in fp.mode:
-            bytes = bytes.encode()
-        buffer = memoryview(bytes)
-        for byte in buffer.tobytes():
+            read_bytes = read_bytes.encode()
+        for byte in read_bytes:
             yield chr(byte)
 
 
