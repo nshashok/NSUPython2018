@@ -1,7 +1,7 @@
 from typing import IO
 
 
-def file_buffer(fp: IO, buff_size: int=5):
+def file_buffer(fp: IO, buff_size: int=512):
     while True:
         units = fp.read(buff_size)
         if len(units) == 0:
