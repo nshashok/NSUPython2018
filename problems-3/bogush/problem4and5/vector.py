@@ -4,12 +4,13 @@ from typing import Sequence, TypeVar, Callable, Generic, Union
 
 supported_types = [int, float, complex]
 T = TypeVar('T', *supported_types)
-AnySupported = Union(*supported_types)
 
 
 class Vector(Generic[T]):
     @staticmethod
-    def of(*elements: Number) -> 'Vector[Number]':
+    def of(*elements: Number) -> 'Vector':
+        if not all((type(x) in supported_types for x in elements)):
+            raise TypeError
         most_complex_type = type(max(elements, key=lambda x: supported_types.index(type(x))))
         elements = [most_complex_type(e) for e in elements]
         return Vector[most_complex_type](elements)
@@ -26,7 +27,7 @@ class Vector(Generic[T]):
             other = self
         return Vector[T]([combine(a, b) for a, b in zip(self.elements, other.elements)])
 
-    def foreach(self, apply: Callable[[T], T]) -> 'Vector'[T]:
+    def foreach(self, apply: Callable[[T], T]) -> 'Vector[T]':
         return Vector[T]([apply(x) for x in self.elements])
 
     def __add__(self, other: 'Vector[T]') -> 'Vector[T]':
@@ -35,7 +36,7 @@ class Vector(Generic[T]):
     def __sub__(self, other: 'Vector[T]') -> 'Vector[T]':
         return self.combine(other, lambda x, y: x - y)
 
-    def __mul__(self, factor: AnySupported) -> 'Vector[T]':
+    def __mul__(self, factor: T) -> 'Vector[T]':
         return self.foreach(apply=lambda x: x.__mul__(factor))
 
     def __and__(self, other: 'Vector[T]') -> T:
