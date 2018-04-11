@@ -99,11 +99,11 @@ class Vector:
     def __ne__(self, vector: 'Vector') -> bool:
         return not (self == vector)
 
-    def __mul__(self, other: Union['Vector', float, int]) -> Union['Vector', float]:
+    def __mul__(self, other: Union['Vector', complex, float, int]) -> Union['Vector', complex, float, int]:
         """
-        Multiply vector by an element, which can be a scalar type (int, float) or a Vector
+        Multiply vector by an element, which can be a scalar type or a Vector
         In case of Vector instance dot product is performed.
-        In of scalar type a new vector returned, constructed from the current one
+        In case of scalar type a new vector is returned, constructed from the current one
         with each coordinate multiplied by the scalar passed.
 
         :param other: Vector or a scalar type (integer, float) - element to multiply by
@@ -120,12 +120,9 @@ class Vector:
 
         raise TypeError("Multiplication is not defined for type " + str(type(other)))
 
-    def __rmul__(self, other: Union['Vector', float, int]) -> Union['Vector', float]:
+    def __rmul__(self, other: Union['Vector', complex, float, int]) -> Union['Vector', complex, float, int]:
         """
-        Multiply vector by an element, which can be a scalar type (int, float) or a Vector
-        In case of Vector instance dot product is performed.
-        In of scalar type a new vector returned, constructed from the current one
-        with each coordinate multiplied by the scalar passed.
+        Perform right multiplication with same effect as left multiplication
 
         :param other: Vector or a scalar type (integer, float) - element to multiply by
         :return: float in case a Vector instance was passed. Vector in case a scalar was passed
@@ -133,8 +130,14 @@ class Vector:
         """
         return self * other
 
-    def __imul__(self, scalar: Union[float, int]) -> 'Vector':
-        if type(scalar) not in [float, int]:
+    def __imul__(self, scalar: Union[complex, float, int]) -> 'Vector':
+        """
+        Modify current vector by multiplying its content by a scalar
+
+        :param scalar: scalar to multiply current vector by
+        :return: current vector with modified content
+        """
+        if _is_scalar(scalar):
             raise TypeError("Multiplication-assignment is not defined for type {}".format(type(scalar)))
 
         self.content = self.__mul_by_scalar(scalar)
@@ -148,10 +151,10 @@ class Vector:
 
     def __add__(self, vector: 'Vector') -> 'Vector':
         """
-        Sums current vector with another one, which must have the same size
+        Sum current vector with another one, which must have the same size
 
         :param vector: vector to sum with
-        :return: new vector with coordinated defined as the sum of corresponding
+        :return: new vector with coordinates defined as the sum of corresponding
             coordinates
         :raise: TypeError in case an incompatible type was passed
         :raise: ValueError in case a *vector* of incompatible length was passed
@@ -169,7 +172,7 @@ class Vector:
         Subtract another vector from the current one. Vectors must have the same size.
 
         :param vector: vector to subtract
-        :return: new vector with coordinated defined as the difference of corresponding
+        :return: new vector with coordinates defined as the difference of corresponding
             coordinates
         :raise: TypeError in case an incompatible type was passed
         :raise: ValueError in case a *vector* of incompatible length was passed
@@ -190,29 +193,22 @@ class Vector:
         """
         return self.__length
 
-    def __getitem__(self, key: int) -> float:
+    def __getitem__(self, key: int) -> Union[complex, float, int]:
         """
         Get vector coordinate value
 
         :param key: positive zero-based index of coordinate to retrieve
         :return: coordinate value
         :raise: TypeError in case invalid *key* type was passed
-        :raise: IndexError in case *key* is not inside range [0, len(vector)]
+        :raise: IndexError in case *key* is not inside range [0, len(vector))
         """
         if not isinstance(key, int):
-            raise TypeError("Key must either be an integer")
+            raise TypeError("Key must be an integer")
 
         if 0 <= key < self.__length:
-            return float(self.content[key])
+            return self.content[key]
         else:
             raise IndexError("Index out of range. Got index: {} (Vector length: {})".format(key, self.__length))
 
     def __str__(self):
-        return "Vector({0})".format((str(self.content)))
-
-
-if __name__ == '__main__':
-    a = Vector([1,"2", 3])
-    b = Vector(("12.45",2,3))
-    c = Vector(1j, 0, 0)
-    print(a + b + c)
+        return "Vector({0})".format(str(self.content))
