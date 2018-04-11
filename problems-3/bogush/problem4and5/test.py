@@ -120,6 +120,7 @@ class VectorTest(TestCase):
         self.checkUnaryOperation(lambda x: x * 2)
         self.checkUnaryOperation(lambda x: x * 3)
         self.checkUnaryOperation(lambda x: x * (-1))
+        self.assertEqual(Vector.of(*[3]*5) * Vector.of(*[2]*5), 3*2*5)
 
 
 if __name__ == '__main__':

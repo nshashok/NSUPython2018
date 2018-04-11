@@ -36,12 +36,17 @@ class Vector(Generic[T]):
     def __sub__(self, other: 'Vector[T]') -> 'Vector[T]':
         return self.combine(other, lambda x, y: x - y)
 
-    def __mul__(self, factor: T) -> 'Vector[T]':
-        return self.foreach(apply=lambda x: x.__mul__(factor))
+    def __mul__(self, factor: Union[Number, 'Vector[T]']) -> 'Vector[T]':
+        if isinstance(factor, Number):
+            return self.foreach(apply=lambda x: x.__mul__(factor))
+        elif isinstance(factor, Vector) and len(factor) == len(self):
+            return self & factor
+        else:
+            raise TypeError
 
     def __and__(self, other: 'Vector[T]') -> T:
-        return reduce(lambda r, x, y: r + x * y,
-                      zip(self.elements, other.elements), T(0))
+        return reduce(lambda r, p: r + p[0] * p[1],
+                      zip(self.elements, other.elements), 0)
 
     def __eq__(self, other):
         return self.elements == other.elements
