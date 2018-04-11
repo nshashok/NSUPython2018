@@ -42,5 +42,14 @@ class Vector(Generic[T]):
         return reduce(lambda r, x, y: r + x * y,
                       zip(self.elements, other.elements), T(0))
 
+    def __eq__(self, other):
+        return self.elements == other.elements
+
+    def __getitem__(self, index: int) -> T:
+        return self.elements[index]
+
+    def index(self, element: T) -> int:
+        return self.elements.index(element)
+
     def __repr__(self):
         return str(self.elements)
