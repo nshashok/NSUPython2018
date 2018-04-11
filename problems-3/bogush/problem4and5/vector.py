@@ -1,4 +1,3 @@
-from functools import reduce
 from numbers import Number
 from typing import Sequence, TypeVar, Callable, Generic, Union
 
@@ -45,8 +44,7 @@ class Vector(Generic[T]):
             raise TypeError
 
     def __and__(self, other: 'Vector[T]') -> T:
-        return reduce(lambda r, p: r + p[0] * p[1],
-                      zip(self.elements, other.elements), 0)
+        return sum(x * y for x, y in zip(self.elements, other.elements))
 
     def __eq__(self, other):
         return self.elements == other.elements
