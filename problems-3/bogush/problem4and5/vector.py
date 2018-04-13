@@ -33,11 +33,11 @@ class Vector(Generic[T]):
         if isinstance(factor, Number):
             return self.map(apply=lambda x: x.__mul__(factor))
         elif isinstance(factor, Vector) and len(factor) == len(self):
-            return self & factor
+            return self.dot_product(factor)
         else:
             raise TypeError
 
-    def __and__(self, other: 'Vector[T]') -> T:
+    def dot_product(self, other: 'Vector[T]') -> T:
         return sum(x * y for x, y in zip(self.elements, other.elements))
 
     def __eq__(self, other):
