@@ -1,7 +1,8 @@
 def integer():
     while True:
         try:
-            int(input("Please enter a number "))
+            val = int(input("Please enter a number "))
+            print("your number is {0}".format(val))
             break
         except ValueError:
             print("This is not a number. "
