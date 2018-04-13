@@ -20,24 +20,18 @@ class Vector(Generic[T]):
     def __len__(self):
         return len(self.elements)
 
-    def combine(self, other: 'Vector[T]' = None,
-                combine: 'Callable[[T, T], T]' = lambda a, _: a) -> 'Vector[T]':
-        if other is None:
-            other = self
-        return Vector[T]([combine(a, b) for a, b in zip(self.elements, other.elements)])
-
-    def foreach(self, apply: Callable[[T], T]) -> 'Vector[T]':
+    def map(self, apply: Callable[[T], T]) -> 'Vector[T]':
         return Vector[T]([apply(x) for x in self.elements])
 
     def __add__(self, other: 'Vector[T]') -> 'Vector[T]':
-        return self.combine(other, lambda x, y: x + y)
+        return Vector[T]([x + y for x, y in zip(self.elements, other.elements)])
 
     def __sub__(self, other: 'Vector[T]') -> 'Vector[T]':
-        return self.combine(other, lambda x, y: x - y)
+        return Vector[T]([x - y for x, y in zip(self.elements, other.elements)])
 
     def __mul__(self, factor: Union[Number, 'Vector[T]']) -> 'Vector[T]':
         if isinstance(factor, Number):
-            return self.foreach(apply=lambda x: x.__mul__(factor))
+            return self.map(apply=lambda x: x.__mul__(factor))
         elif isinstance(factor, Vector) and len(factor) == len(self):
             return self & factor
         else:
