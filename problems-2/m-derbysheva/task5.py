@@ -16,13 +16,16 @@ encodings = ['koi8-r', 'cp855', 'cp866', 'cp1251',
 
 
 def makeTable(file):
-    data = file.read()
     n = 0
     check = dict.fromkeys(range(128, 256), 0)
-    for i in data:
-        if i > 127:
-            check[i] += 1
-            n += 1
+    while True:
+        data = file.read(1024)
+        if len(data) == 0:
+            break
+        for i in data:
+            if i > 127:
+                check[i] += 1
+                n += 1
     return n, check
 
 
