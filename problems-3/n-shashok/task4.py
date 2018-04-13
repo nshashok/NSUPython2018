@@ -5,20 +5,21 @@ from itertools import zip_longest
 class Vector(object):
     def __init__(self, *args):
         self.__complex = None
-        print(type(args))
         if len(args) == 1:
-            l = (0,0,0)
-            if isinstance(*args, (tuple, list)):
-                print("collection")
-                l = tuple(args)
-            elif isinstance(*args, types.GeneratorType):
+            if isinstance(*args, types.GeneratorType):
                 print("generator")
-                l = (e for e in args[0])
+                l = (e for e in args)
+            elif self._isnumeric(*args):
+                l = (args)
+            else:
+                l = tuple(*args)
             self.values = [None] * len(l)
-            for i in enumerate(args):
+            for i in enumerate(l):
                 self[i[0]] = i[1]
         else:
-            
+            self.values = [None] * len(args)
+            for i in enumerate(args):
+                self[i[0]] = i[1]
         for i in enumerate(self.values):
             self[i[0]] = self.__complex(i[1])
 
@@ -112,8 +113,14 @@ class Vector(object):
         except TypeError:
             return False
 
-vector1 = Vector(1, 2, 3, 4, 5j)
-vector2 = Vector((6, 7, 8))
-vector2 = Vector([6, 7, 8])
-print(vector1)
-print(vector2)
+if __name__ == "__main__":
+    vector1 = Vector(1, 2, 3, 4, 5j)
+    vector2 = Vector((6, 7, 8.6))
+    vector3 = Vector([6, 7, 8])
+    vector4 = Vector(range(0, 5))
+    vector5 = Vector(1)
+    print(vector1)
+    print(vector2)
+    print(vector3)
+    print(vector4)
+    print(vector5)
