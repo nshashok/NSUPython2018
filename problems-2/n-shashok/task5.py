@@ -2,7 +2,7 @@ import task4
 import sys
 
 
-encodings = ["cp855", "cp866", "cp1251", "iso8859_5", "koi8-r", "mac_cyrillic"]
+encodings = ("cp855", "cp866", "cp1251", "iso8859_5", "koi8-r", "mac_cyrillic")
 
 frequency = {
     "о": 10.983,
@@ -51,7 +51,7 @@ def detect_encoding(filename):
             try:
                 encodings_coefficients[encoding] = \
                     encodings_coefficients.get(encoding, 0) + \
-                    abs(frequency[(item[0].decode(encoding)).lower()] - item[1])
+                    abs(frequency[(item[0].lower().decode(encoding))] - item[1])
             except KeyError:
                 encodings_coefficients[encoding] = \
                     encodings_coefficients.get(encoding, 0) + item[1]
@@ -63,6 +63,11 @@ if __name__ == "__main__":
         print("Usage: " + __file__ + " file_name")
     else:
         try:
-            print(detect_encoding(sys.argv[1]))
+            enc = str(detect_encoding(sys.argv[1]))
+            with open(sys.argv[1], "rb") as f:
+                for line in f:
+                    print(line.decode(enc))
+            print("Encoding: ", enc)
+
         except OSError as e:
             print("Unable to read: ", e, file=sys.stderr)
