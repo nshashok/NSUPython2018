@@ -8,7 +8,7 @@ def chars(fp):
     buffer = file_buffer(fp)
     if 'b' in fp.mode:
         for byte in buffer:
-            yield byte
+            yield chr(byte)
     else:
         for char in buffer:
             yield char
