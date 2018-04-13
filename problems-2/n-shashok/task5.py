@@ -51,11 +51,11 @@ def detect_encoding(filename):
             try:
                 print(item[0].decode(encoding), (item[0].decode(encoding)).lower(), (item[0].decode(encoding)).lower())
                 encodings_coefficients[encoding] = \
-                    encodings_coefficients.get(encoding, 0) - \
-                    abs(frequency[(item[0].decode(encoding)).lower()] - item[1])
+                    encodings_coefficients.get(encoding, 0) + \
+                    abs(frequency[(item[0].lower().decode(encoding))] - item[1])
             except KeyError:
                 encodings_coefficients[encoding] = \
-                    encodings_coefficients.get(encoding, 0)# + item[1]
+                    encodings_coefficients.get(encoding, 0) + item[1]
         print()
     print(encodings_coefficients)
     return min(encodings_coefficients, key=encodings_coefficients.get)
