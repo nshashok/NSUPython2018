@@ -192,7 +192,7 @@ class Vector3D(Vector):
         raise TypeError("wrong number of arguments")
 
     def cross(self, vector):
-        if not isinstance(vector, Vector):
+        if not isinstance(vector, Vector3D):
             raise TypeError("vector is not a Vector3D")
         if len(vector.value) == len(self.value):
             return Vector3D(self[1] * vector[2] - self[2] * vector[1],
