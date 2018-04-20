@@ -12,7 +12,7 @@ class Vector:
 
     def _isInt(self, elem):
         try:
-            if isinstance(elem, float) or isinstance(elem, complex):
+            if isinstance(elem, (float, complex)):
                 return False
             int(elem)
             return True
@@ -30,7 +30,7 @@ class Vector:
 
     def _isComplex(self, elem):
         try:
-            f = complex(elem)
+            complex(elem)
             return True
         except ValueError:
             return False
@@ -38,19 +38,19 @@ class Vector:
     def __getElemType(self, elements):
         elemsType = int
         for elem in elements:
-            if not self._isInt(elem):
-                if self._isFloat(elem):
-                    elemsType = float
-                    continue
-                else:
-                    if self._isComplex(elem):
-                        elemsType = complex
-                        continue
-                    else:
-                        raise ValueError
+            if self._isInt(elem):
+                continue
+            if self._isFloat(elem):
+                elemsType = float
+                continue
+            if self._isComplex(elem):
+                elemsType = complex
+                continue
+            else:
+                raise ValueError
         return elemsType
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args):
         """Создает vector из переданного iterable или чисел
         :param iterable
         """
@@ -64,11 +64,9 @@ class Vector:
                 l = [e for e in args[0]]
                 t = self.__getElemType(l)
                 self.myVector = [t(e) for e in l]
-            if isinstance(*args, int):
-                self.myVector = [*args]
-            if isinstance(*args, float):
-                self.myVector = [*args]
-            if isinstance(*args, complex):
+            if not isinstance(*args, (int, float, complex)):
+                raise ValueError
+            else:
                 self.myVector = [*args]
         else:
             t = self.__getElemType(args)
@@ -145,3 +143,7 @@ class Vector:
         :return: Евклидова длина вектора
         """
         return math.sqrt(sum(v ** 2 for v in self.myVector))
+
+
+v = Vector(1)
+print(v)
