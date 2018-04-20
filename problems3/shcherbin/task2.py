@@ -1,6 +1,7 @@
 import sys
 import re
 import math
+import heapq
 
 
 def countOpens(f):
@@ -14,19 +15,17 @@ def countOpens(f):
 def countDecil(n, file):
     listSize = math.ceil(0.1 * n)
     decil = []
-    print(n)
-    print(listSize)
     for line in file:
         if line.startswith('open'):
             time = float(re.search(r'\d+ usec', line).group(0).split(' ')[0])
             if len(decil) <= listSize:
-                decil.append(time)
+                heapq.heappush(decil, time)
             else:
-                min = sorted(decil)[0]
+                min = decil[0]
                 if time > min:
-                    decil.remove(min)
-                    decil.append(time)
-    print(sorted(decil)[0])
+                    heapq.heappop(decil)
+                    heapq.heappush(decil, time)
+    return decil[-1]
 
 
 if __name__ == '__main__':
@@ -38,4 +37,5 @@ if __name__ == '__main__':
     with open(filename) as file:
         n = countOpens(file)
     with open(filename) as file:
-        countDecil(n, file)
+        d = countDecil(n, file)
+        print(d)
