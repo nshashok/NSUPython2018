@@ -39,7 +39,7 @@ class Vector:
         types = set()
         for coordinate in self._coordinates:
             if isinstance(coordinate, str):
-                coordinate = self._parse_string(coordinate)
+                coordinate = self._parse_string(coordinate, (int, float, complex))
             if isinstance(coordinate, numbers.Number):
                 types.add(type(coordinate))
             else:
@@ -52,20 +52,13 @@ class Vector:
             self._coordinates = [int(elem) for elem in self._coordinates]
 
     @staticmethod
-    def _parse_string(string_value):
-        try:
-            int(string_value)
-            return int(string_value)
-        except ValueError:
+    def _parse_string(string_value, types):
+        for type in types:
             try:
-                float(string_value)
-                return float(string_value)
+                return type(string_value)
             except ValueError:
-                try:
-                    complex(string_value)
-                    return complex(string_value)
-                except ValueError:
-                    return string_value
+                pass
+        return string_value
 
     def __str__(self):
         """
@@ -143,7 +136,7 @@ class Vector:
         :return: Vector, or number - int, float, complex
         """
         if isinstance(other, str):
-            other = self._parse_string(other)
+            other = self._parse_string(other, (int, float, complex))
         if isinstance(other, (int, float, complex)):
             return Vector([i * other for i in self._coordinates])
         elif not isinstance(other, Vector):
@@ -173,7 +166,7 @@ class Vector:
         :return: Vector, or number - int, float, complex
         """
         if isinstance(other, str):
-            other = self._parse_string(other)
+            other = self._parse_string(other, (int, float, complex))
         if not isinstance(other, (int, float, complex)):
             raise TypeError("Unexpected argument type: {}".format(type(other)))
 
