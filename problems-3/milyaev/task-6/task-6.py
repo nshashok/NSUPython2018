@@ -23,12 +23,12 @@ class Vector:
             self._coordinates = []
             self._len = 0
         elif len(args) == 1:
-            if isinstance(args[0], (int, float, complex, str)):
-                self._coordinates = [args[0]]
-                self._len = 1
-            elif isinstance(args[0], types.GeneratorType) or isinstance(args, collections.Iterable):
+            if isinstance(args[0], types.GeneratorType) or isinstance(args, collections.Iterable):
                 self._coordinates = list(args[0])
                 self._len = len(self._coordinates)
+            else:
+               self._coordinates = [args[0]]
+               self._len = 1
         else:
             self._coordinates = [*args]
             self._len = len(self._coordinates)
@@ -38,27 +38,25 @@ class Vector:
     def __cast_to_general_type(self):
         types = set()
         for coordinate in self._coordinates:
-            if isinstance(coordinate, str):
-                coordinate = self._parse_string(coordinate, (int, float, complex))
             if isinstance(coordinate, numbers.Number):
                 types.add(type(coordinate))
             else:
-                raise TypeError("{} is not a number".format(coordinate))
-        if complex in types:
-            self._coordinates = [complex(elem) for elem in self._coordinates]
-        elif float in types:
-            self._coordinates = [float(elem) for elem in self._coordinates]
-        else:
-            self._coordinates = [int(elem) for elem in self._coordinates]
+                coordinate = self._parse(coordinate, (int, float, complex))
+                types.add(type(coordinate))
+
+        for i in (complex, float, int):
+            if i in types:
+                self._coordinates = [i(elem) for elem in self._coordinates]
+                break
 
     @staticmethod
-    def _parse_string(string_value, types):
+    def _parse(value, types):
         for type in types:
             try:
-                return type(string_value)
+                return type(value)
             except ValueError:
                 pass
-        return string_value
+        raise TypeError("{} is not a number".format(value))
 
     def __str__(self):
         """
@@ -136,7 +134,7 @@ class Vector:
         :return: Vector, or number - int, float, complex
         """
         if isinstance(other, str):
-            other = self._parse_string(other, (int, float, complex))
+            other = self._parse(other, (int, float, complex))
         if isinstance(other, (int, float, complex)):
             return Vector([i * other for i in self._coordinates])
         elif not isinstance(other, Vector):
@@ -166,7 +164,7 @@ class Vector:
         :return: Vector, or number - int, float, complex
         """
         if isinstance(other, str):
-            other = self._parse_string(other, (int, float, complex))
+            other = self._parse(other, (int, float, complex))
         if not isinstance(other, (int, float, complex)):
             raise TypeError("Unexpected argument type: {}".format(type(other)))
 
