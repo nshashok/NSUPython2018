@@ -23,12 +23,12 @@ class Vector:
             self._coordinates = []
             self._len = 0
         elif len(args) == 1:
-            if isinstance(args[0], (int, float, complex, str)):
-                self._coordinates = [args[0]]
-                self._len = 1
-            elif isinstance(args[0], types.GeneratorType) or isinstance(args, collections.Iterable):
+            if isinstance(args[0], types.GeneratorType) or isinstance(args, collections.Iterable):
                 self._coordinates = list(args[0])
                 self._len = len(self._coordinates)
+            else:
+                self._coordinates = [args[0]]
+                self._len = 1
         else:
             self._coordinates = [*args]
             self._len = len(self._coordinates)
