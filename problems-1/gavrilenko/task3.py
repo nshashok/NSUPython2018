@@ -1,3 +1,4 @@
+import time
 import math
 from bitarray import bitarray
 
@@ -33,4 +34,20 @@ def eratosthenesSet(n):
             for j in range(i ** 2, n + 1, i):
                 array.discard(j)
     return array
+
+
+if __name__ == "__main__":
+    N = 100000000
+
+    begin = time.time()
+    eratosthenesArray(N)
+    print("Time for array = ", time.time() - begin)
+
+    begin = time.time()
+    eratosthenesSet(N)
+    print("Time for set = ", time.time() - begin)
+
+    begin = time.time()
+    eratosthenesBitearray(N)
+    print("Time for bitarr = ", time.time() - begin)
 
