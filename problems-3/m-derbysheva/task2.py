@@ -1,7 +1,7 @@
 import heapq
 import re
 import sys
-
+import math
 
 def skip(iterable, prefix):
     for line in iterable:
@@ -27,14 +27,15 @@ try:
 
     file.seek(0)
     average = sum / count
-    top = []
+    amount = math.ceil(count / 10)
+    top = [] * amount
     skip(file, "open")
-    for value in matching(file, "open", number_pattern):
-        if len(top) < count / 10:
-            heapq.heappush(top, value)
-        else:
+    gen = matching(file, "open", number_pattern)
+    for i in range(amount):
+        heapq.heappush(top, next(gen))
+    for value in gen:
+        if value > top[0]:
             heapq.heappushpop(top, value)
-
     print("average {0}\ntop decile {1}".format(average, heapq.nsmallest(1, top)[0]))
 except Exception as e:
     print(e, file=sys.stderr)
