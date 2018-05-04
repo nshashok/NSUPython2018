@@ -1,6 +1,6 @@
 import _io
 import re
-from sortedcontainers import SortedList
+import heapq
 import sys
 import math
 
@@ -8,18 +8,14 @@ import math
 def count_decil(file: _io.TextIOWrapper):
     n = math.ceil(0.1 * sum(1 for l in file if l.startswith("open")))
     file.seek(0)
-    dec = SortedList()
+    dec = [0] * n
     pat = re.compile(r"open .* (\d+) usec")
     for l in file:
         match = pat.match(l)
         if match is not None:
             value = float(match.group(1))
-            if len(dec) < n:
-                dec.add(value)
-            else:
-                if value > dec[0]:
-                    dec.pop(0)
-                    dec.add(value)
+            if value > dec[0]:
+                heapq.heappushpop(dec, value)
     return dec[0]
 
 if __name__ == "__main__":
