@@ -1,7 +1,11 @@
+from itertools import tee
+from types import GeneratorType
+
+
 class Vector:
     """Class of algebra vector with standart operations"""
 
-    def __init__(self, *args):
+    def __init__(self, *args, **kwargs):
         """initialisation of Vector
 
         Parameters
@@ -11,34 +15,53 @@ class Vector:
         Returns
         -----------
         New instance of Vector, if args are null returns (0)
-        
+
         Raises
         -----------
         TypeError
             if args are not a number
         """
-        if len(args) == 0:
-            self.value = (0,)
+        if "types" in kwargs:
+            types = kwargs["types"]
         else:
-            most_complex = int
+            types = (int, float, complex)
+        if len(args) == 0:
+            raise TypeError("Empty list of arguments")
+        else:
             iterable = args
+            type_index = 0
             try:
                 if len(args) == 1:
-                    iter(args[0])
-                    iterable = args[0]
+                    if isinstance(args[0], GeneratorType):
+                        iterable = args[0]
+                    else:
+                        while type_index < len(types):
+                            try:
+                                types[type_index](args[0])
+                                break
+                            except (TypeError, ValueError):
+                                type_index += 1
+                        else:
+                            type_index = 0
+                            iter(args[0])
+                            iterable = args[0]
             except TypeError:
                 pass
-            for val in iterable:
-                if not isinstance(val, (int, float, complex)):
+            it1, it2 = tee(iterable, 2)
+            for val in it1:
+                while type_index < len(types):
+                    try:
+                        types[type_index](val)
+                        for i in range(type_index + 1, len(types)):
+                            if isinstance(val, types[i]):
+                                type_index = i
+                                break
+                        break
+                    except (TypeError, ValueError):
+                        type_index += 1
+                else:
                     raise TypeError("init values are not numbers or iterable")
-                if most_complex == int:
-                    if type(val) == float:
-                        most_complex = float
-                    elif type(val) == complex:
-                        most_complex = complex
-                elif most_complex == float and type(val) == complex:
-                    most_complex = complex
-            self.value = tuple(most_complex(val) for val in iterable)
+            self.value = tuple(types[type_index](val) for val in it2)
 
     def __getitem__(self, idx):
         """get element by index
@@ -55,7 +78,7 @@ class Vector:
         -----------
         TypeError
             if index is not an integer
-        IndexError 
+        IndexError
             if index is out of bounds
         """
         if type(idx) is not int:
@@ -77,7 +100,7 @@ class Vector:
         """lenght of vector
         Returns
         -----------
-        num: int 
+        num: int
             number of elements
         """
         return len(self.value)
@@ -104,7 +127,7 @@ class Vector:
             raise ValueError("Vectors are different sizes")
 
         add = tuple(i + j for i, j in zip(self, v))
-        return Vector(*add)
+        return Vector(add)
 
     def __sub__(self, v):
         """subtraction of two vectors (self - another vector) in new instance of Vector
@@ -129,7 +152,7 @@ class Vector:
             raise ValueError("Vectors are different sizes")
 
         sub = tuple(i - j for i, j in zip(self, v))
-        return Vector(*sub)
+        return Vector(sub)
 
     def __mul__(self, num):
         """multiplication on number in new instance of Vector
@@ -156,7 +179,7 @@ class Vector:
             if not isinstance(num, (int, float, complex)):
                 raise TypeError("Argument is not a Vector or number")
             mult = tuple(i * num for i in self)
-            return Vector(*mult)
+            return Vector(mult)
 
     def __eq__(self, v):
         """comparing two vectors
@@ -166,7 +189,7 @@ class Vector:
         Returns
         -----------
         ans: boolean
-            True if vectors are equal, False in all other occasions 
+            True if vectors are equal, False in all other occasions
         """
         if not isinstance(v, Vector):
             return False
@@ -175,21 +198,9 @@ class Vector:
 
 class Vector3D(Vector):
     def __init__(self, *args):
-        if len(args) == 0:
-            super().__init__(0, 0, 0)
-            return
-        if len(args) == 1:
-            try:
-                length = len(args[0])
-            except TypeError as e:
-                raise TypeError("wrong number of arguments")
-            if length == 3:
-                super().__init__(args[0])
-            return
-        elif len(args) == 3:
-            super().__init__(args)
-            return
-        raise TypeError("wrong number of arguments")
+        super().__init__(*args)
+        if len(self.value) != 3:
+            raise TypeError("wrong number of arguments")
 
     def cross(self, vector):
         if not isinstance(vector, Vector3D):
