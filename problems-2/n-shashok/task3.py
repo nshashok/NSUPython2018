@@ -1,34 +1,4 @@
-def zip_longest(*lists):
-    """Zips lists values using generate(l).
-
-    Args:
-        *lists(Union): Union of lists 
-
-    Returns:
-        list
-    """
-
-    def generate(l):
-        """Generates values from list or zeroes if there's no any values.
-
-        Args:
-            l(list): some list
-
-        Yields:
-            float: next item from the list or continues the list with 0.0
-
-        Examples:
-            >>>i = generate([1, 2, 3, 4, 5])
-            >>>print([next(i) for _ in range(10)])
-            [1, 2, 3, 4, 5, 0.0, 0.0, 0.0, 0.0, 0.0]
-        """
-        for item in l:
-            yield item
-        while True:
-            yield 0.0
-
-    gg = [generate(l) for l in lists]
-    return [tuple(next(g) for g in gg) for _ in range(max([len(l) for l in lists]))]
+from itertools import zip_longest
 
 
 class Vector(object):
@@ -57,8 +27,7 @@ class Vector(object):
             None: otherwise.
         """
         if isinstance(other, Vector):
-            print(zip_longest(self.values, other.values))
-            return Vector(*([a[0] + a[1] for a in zip_longest(self.values, other.values)]))
+            return Vector(*([a[0] + a[1] for a in zip_longest(self.values, other.values, fillvalue=0.0)]))
 
     def __sub__(self, other):
         """Subtracts two vectors.
@@ -71,7 +40,7 @@ class Vector(object):
             None: otherwise.
         """
         if isinstance(other, Vector):
-            return Vector(*([a[0] - a[1] for a in zip_longest(self.values, other.values)]))
+            return Vector(*([a[0] - a[1] for a in zip_longest(self.values, other.values, fillvalue=0.0)]))
 
     def __mul__(self, other):
         """Multiplies two vectors (scalar) or multiplies self vector with a number.
@@ -85,7 +54,7 @@ class Vector(object):
             None: otherwise.
         """
         if isinstance(other, Vector):
-            return sum([a[0] * a[1] for a in zip_longest(self.values, other.values)])
+            return sum([a[0] * a[1] for a in zip_longest(self.values, other.values, fillvalue=0.0)])
         elif isinstance(other, type(1)) or isinstance(other, type(1.0)):
             return Vector(*([a * other for a in self.values]))
 
