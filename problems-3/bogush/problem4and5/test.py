@@ -5,123 +5,106 @@ from unittest import main, TestCase
 
 
 class VectorTest(TestCase):
-    test_examples = {
-        Vector: {
-            int: [
-                [0],
-                [1],
-                [-1],
-                [1, 2, 3],
-                [-1, -2, -3],
-            ],
-            float: [
-                [0.0],
-                [3.14],
-                [1.0, 2.0, 3.0],
-                [-1.0, -2.0, -3.0],
-            ],
-            complex: [
-                [0j],
-                [1j],
-                [-1j],
-                [1 + 2j],
-                [1 - 2j, 3 + 4j, 5j - 6],
-            ],
-        },
-        Vector.of: {
-            int: [
-                [0],
-                [1],
-                [-1],
-                [1, 2, 3],
-                [-1, -2, -3],
-            ],
-            float: [
-                [0.0],
-                [3.14],
-                [1.0, 2, 3],
-                [1, 2, 3.0],
-                [1, 2.0, 3],
-                [-1, -2, -3.0],
-            ],
-            complex: [
-                [0j],
-                [1j],
-                [-1j],
-                [1 + 2j],
-                [1 - 2j, 3, 0],
-                [0, 1.0, -1j],
-            ],
-        },
-    }
+    def assert_all_of_type(self, elements, the_type):
+        for element in elements:
+            self.assertTrue(isinstance(element, the_type),
+                            '%s is not of type %s' % (element, the_type))
 
-    all_examples_list = chain(*chain(*[value.values() for value in test_examples.values()]))
-
-    def testInit(self):
-        for example_type, examples in VectorTest.test_examples.get(Vector).items():
-            for example in examples:
-                for elem in Vector[example_type](example):
-                    self.assertEqual(type(elem), example_type)
-
-    def testOf(self):
-        with self.assertRaises(TypeError):
-            # noinspection PyTypeChecker
-            Vector.of('a')
-            # noinspection PyTypeChecker
-            Vector.of(1, 2, 3, '4')
-            # noinspection PyTypeChecker
-            Vector.of([])
-
-        for example_type, examples in VectorTest.test_examples.get(Vector.of).items():
-            for example in examples:
-                for elem in Vector.of(*example):
-                    self.assertEqual(type(elem), example_type)
-
-        self.assertEqual(Vector.of(1, 2.0), Vector.of(1.0, 2))
-        self.assertEqual(Vector.of(1, 0j), Vector.of(1 + 0j, 0))
-
-    def testGetitem(self):
-        for example in VectorTest.all_examples_list:
-            v = Vector.of(*example)
-            for i, elem in enumerate(example):
-                self.assertEqual(v[i], elem)
-
-    def checkBinaryOperation(self, operation):
-        for example_type, examples in VectorTest.test_examples.get(Vector).items():
-            for example1 in examples:
-                for example2 in examples:
-                    vector1 = Vector[example_type](example1)
-                    vector2 = Vector[example_type](example2)
-                    vector3 = Vector[example_type]([operation(x, y) for x, y in zip(example1, example2)])
-                    self.assertEqual(operation(vector1, vector2), vector3)
-
-    def checkUnaryOperation(self, operation):
-        for example_type, examples in VectorTest.test_examples.get(Vector).items():
-            for example1 in examples:
-                vector1 = Vector[example_type](example1)
-                vector2 = operation(vector1)
-                for elem1, elem2 in zip(example1, vector2):
-                    self.assertEqual(elem2, operation(elem1))
-
-    def testAdd(self):
-        self.checkBinaryOperation(lambda x, y: x + y)
-        self.assertEqual(Vector.of(1, 2.0, 3.0 + 4.0j) + Vector.of(9, 8.0, 7.0 + 6.0j),
-                         Vector.of(10, 10.0, 10.0 + 10.0j))
+    def test_vector_of_integers(self):
+        v = Vector.of(1)
+        self.assert_all_of_type(v.elements, int)
+        v = Vector.of(1, 2)
+        self.assert_all_of_type(v.elements, int)
         v = Vector.of(1, 2, 3)
-        self.assertEqual(v + v, v * 2)
-        self.assertEqual(v + v - v, v)
+        self.assert_all_of_type(v.elements, int)
 
-    def testSub(self):
-        self.checkBinaryOperation(lambda x, y: x - y)
-        self.assertEqual(Vector.of(10, 10.0, 10.0 + 10.0j) - Vector.of(1, 2.0, 3.0 + 4.0j),
-                         Vector.of(9, 8.0, 7.0 + 6.0j))
+    def test_vector_of_integer_strings(self):
+        v = Vector.of('1')
+        self.assert_all_of_type(v.elements, int)
+        v = Vector.of('1', '2')
+        self.assert_all_of_type(v.elements, int)
+        v = Vector.of('1', '2', '3')
+        self.assert_all_of_type(v.elements, int)
 
-    def testMul(self):
-        self.checkUnaryOperation(lambda x: x * 2)
-        self.checkUnaryOperation(lambda x: x * 3)
-        self.checkUnaryOperation(lambda x: x * (-1))
-        self.assertEqual(Vector.of(*[3]*5) * Vector.of(*[2]*5), 3*2*5)
+    def test_vector_of_floats(self):
+        v = Vector.of(1.)
+        self.assert_all_of_type(v.elements, float)
+        Vector.of(1., 2.)
+        self.assert_all_of_type(v.elements, float)
+        Vector.of(1., 2., 3.)
+        self.assert_all_of_type(v.elements, float)
 
+    def test_vector_of_float_strings(self):
+        v = Vector.of('1.')
+        self.assert_all_of_type(v.elements, float)
+        Vector.of('1.', '2.')
+        self.assert_all_of_type(v.elements, float)
+        Vector.of('1.', '2.', '3.')
+        self.assert_all_of_type(v.elements, float)
+
+    def test_vector_of_complex(self):
+        v = Vector.of(1j)
+        self.assert_all_of_type(v.elements, complex)
+        Vector.of(1j, 2j)
+        self.assert_all_of_type(v.elements, complex)
+        Vector.of(1j, 2j, 3j)
+        self.assert_all_of_type(v.elements, complex)
+
+    def test_vector_of_complex_strings(self):
+        v = Vector.of('1j')
+        self.assert_all_of_type(v.elements, complex)
+        Vector.of('1j', '2j')
+        self.assert_all_of_type(v.elements, complex)
+        Vector.of('1j', '2j', '3j')
+        self.assert_all_of_type(v.elements, complex)
+
+    def test_vector_of_mixed_values(self):
+        v = Vector.of(1, '2')
+        self.assert_all_of_type(v.elements, int)
+        v = Vector.of(1, 2.)
+        self.assert_all_of_type(v.elements, float)
+        v = Vector.of(1, '2.')
+        self.assert_all_of_type(v.elements, float)
+        v = Vector.of(1., '2')
+        self.assert_all_of_type(v.elements, float)
+        v = Vector.of(1j, 2.)
+        self.assert_all_of_type(v.elements, complex)
+        v = Vector.of(1, 2j)
+        self.assert_all_of_type(v.elements, complex)
+        v = Vector.of('1.', 2j)
+        self.assert_all_of_type(v.elements, complex)
+        v = Vector.of(1, 2.,'3j')
+        self.assert_all_of_type(v.elements, complex)
+        v = Vector.of(1j, 2., '3')
+        self.assert_all_of_type(v.elements, complex)
+
+    def test_vector_of_cruft(self):
+        self.assertRaises(TypeError, lambda: Vector.of(''))
+        self.assertRaises(TypeError, lambda: Vector.of('asdf'))
+        self.assertRaises(TypeError, lambda: Vector.of({1}))
+        self.assertRaises(TypeError, lambda: Vector.of([1]))
+        self.assertRaises(TypeError, lambda: Vector.of({1:2}))
+
+    def test_vector_add(self):
+        self.assertEqual(Vector.of(1) + Vector.of(2), Vector.of(3))
+        self.assertEqual(Vector.of(1, 2) + Vector.of(3, 4), Vector.of(4, 6))
+
+    def test_vector_sub(self):
+        self.assertEqual(Vector.of(3) - Vector.of(2), Vector.of(1))
+        self.assertEqual(Vector.of(4, 6) - Vector.of(3, 4), Vector.of(1, 2))
+
+    def test_vector_mult_by_scalar(self):
+        self.assertEqual(Vector.of(1) * 1, Vector.of(1))
+        self.assertEqual(Vector.of(1) * 2, Vector.of(2))
+        self.assertEqual(Vector.of(3) * 2, Vector.of(6))
+
+        self.assertEqual(Vector.of(1.) * 1., Vector.of(1.))
+        self.assertEqual(Vector.of(1.) * 2., Vector.of(2.))
+        self.assertEqual(Vector.of(3.) * 2., Vector.of(6.))
+
+        self.assertEqual(Vector.of(1j) * 1j, Vector.of(-1+0j))
+        self.assertEqual(Vector.of(1j) * 2j, Vector.of(-2+0j))
+        self.assertEqual(Vector.of(3j) * 2j, Vector.of(-6+0j))
 
 if __name__ == '__main__':
     main()
