@@ -6,12 +6,8 @@ from file_buffer import file_buffer
 
 def chars(fp):
     buffer = file_buffer(fp)
-    if 'b' in fp.mode:
-        for byte in buffer:
-            yield chr(byte)
-    else:
-        for char in buffer:
-            yield char
+    for byte_or_char in buffer:
+        yield byte_or_char
 
 
 def buffered_cat(fp):
@@ -22,8 +18,10 @@ def buffered_cat(fp):
 def main():
     arg_parser = ArgumentParser()
     arg_parser.add_argument('file', help='file to read')
-    arg_parser.add_argument('-b', '--binary', dest='mode', action='store_const', const='rb', default='r',
-                            help='if set then open file as binary, otherwise as text')
+    arg_parser.add_argument(
+        '-b', '--binary', dest='mode', action='store_const', const='rb',
+        default='r', help='if set then open file as binary, otherwise as text'
+    )
     args = arg_parser.parse_args(argv[1:])
     try:
         with open(args.file, args.mode) as fp:
