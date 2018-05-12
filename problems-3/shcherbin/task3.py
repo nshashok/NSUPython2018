@@ -1,24 +1,32 @@
+import sys
+
+
 class LazyFileReader:
 
     def __init__(self, file):
         self.file = file
         self.pos = 0
+        self.chunck = self.file.read(512)
+        self.chunckLen = len(self.chunck)
 
     def __iter__(self):
         return self
 
     def __next__(self):
-        if self.pos == 0:
-            self.chanck = self.file.read(512)
-
-        if self.chanck is None:
+        if self.pos == self.chunckLen and self.chunckLen < 512:
             raise StopIteration
 
-        res = self.chanck[self.pos]
-        self.pos = (self.pos + 1) % 512
+        res = self.chunck[self.pos]
+        self.pos = (self.pos + 1) % self.chunckLen
+
+        if self.pos == 0:
+            self.chunck = self.file.read(512)
+            self.chunckLen = len(self.chunck)
+
         return res
 
 
-f = open("test.log", mode="rb")
-for chanck in LazyFileReader(f):
-    print(chanck)
+if __name__ == '__main__':
+    f = sys.stdin
+    for byte in LazyFileReader(f):
+        print(byte)
