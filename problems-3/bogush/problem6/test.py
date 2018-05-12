@@ -20,14 +20,14 @@ class Vector3DTest(TestCase):
         self.assert_all_of_type(Vector3D([1j, 2j, 3j]).elements, complex)
 
     def test_vector3d_less_than_3_elements(self):
-        self.assertRaises(ValueError, Vector3D([]))
-        self.assertRaises(ValueError, Vector3D([1]))
-        self.assertRaises(ValueError, Vector3D([1, 2]))
+        self.assertRaises(ValueError, lambda: Vector3D([]))
+        self.assertRaises(ValueError, lambda: Vector3D([1]))
+        self.assertRaises(ValueError, lambda: Vector3D([1, 2]))
 
     def test_vector3d_more_than_3_elements(self):
-        self.assertRaises(ValueError, Vector3D([1, 2, 3, 4]))
-        self.assertRaises(ValueError, Vector3D([1, 2, 3, 4, 5]))
-        self.assertRaises(ValueError, Vector3D([1, 2, 3, 4, 5, 6]))
+        self.assertRaises(ValueError, lambda: Vector3D([1, 2, 3, 4]))
+        self.assertRaises(ValueError, lambda: Vector3D([1, 2, 3, 4, 5]))
+        self.assertRaises(ValueError, lambda: Vector3D([1, 2, 3, 4, 5, 6]))
 
 
 if __name__ == 'main':
