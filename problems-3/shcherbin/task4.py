@@ -10,45 +10,22 @@ class Vector:
 
     myVector = []
 
-    def _isInt(self, elem):
-        try:
-            if isinstance(elem, (float, complex)):
-                return False
-            int(elem)
-            return True
-        except ValueError:
-            return False
-
-    def _isFloat(self, elem):
-        try:
-            if isinstance(elem, complex):
-                return False
-            float(elem)
-            return True
-        except ValueError:
-            return False
-
-    def _isComplex(self, elem):
-        try:
-            complex(elem)
-            return True
-        except ValueError:
-            return False
-
-    def __getElemType(self, elements):
-        elemsType = int
+    @staticmethod
+    def __getElemType(elements):
+        validTypes = (int, float, complex)
+        typeNumber = 0
         for elem in elements:
-            if self._isInt(elem):
-                continue
-            if self._isFloat(elem):
-                elemsType = float
-                continue
-            if self._isComplex(elem):
-                elemsType = complex
-                continue
-            else:
-                raise ValueError
-        return elemsType
+            try:
+                ti = validTypes.index(type(elem))
+                if typeNumber < ti:
+                    typeNumber = ti
+            except ValueError:
+                try:
+                    validTypes[typeNumber](elem)
+                except (TypeError, ValueError):
+                    typeNumber += 1
+
+        return validTypes[typeNumber]
 
     def __init__(self, *args):
         """Создает vector из переданного iterable или чисел
@@ -64,10 +41,9 @@ class Vector:
                 l = [e for e in args[0]]
                 t = self.__getElemType(l)
                 self.myVector = [t(e) for e in l]
-            if not isinstance(*args, (int, float, complex)):
-                raise ValueError
             else:
-                self.myVector = [*args]
+                t = self.__getElemType(args)
+                self.myVector = [t(*args)]
         else:
             t = self.__getElemType(args)
             self.myVector = [t(e) for e in args]
