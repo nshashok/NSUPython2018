@@ -1,18 +1,37 @@
 from numbers import Number
 from typing import Sequence, TypeVar, Callable, Generic, Union
 
-supported_types = [int, float, complex]
+supported_types = (int, float, complex)
 T = TypeVar('T', *supported_types)
+
+
+def _most_appropriate_cast(value, types):
+    for the_type in types:
+        if isinstance(value, the_type):
+            return value
+    # value is not of any type in types.
+    # try to cast
+    for the_type in reversed(types):
+        try:
+            return the_type(value)
+        except (TypeError, ValueError):
+            pass
+    raise TypeError('failed to cast to any of types: {}'.format(types))
 
 
 class Vector(Generic[T]):
     @staticmethod
-    def of(*elements: Number) -> 'Vector':
-        if not all((type(x) in supported_types for x in elements)):
-            raise TypeError
-        most_complex_type = type(max(elements, key=lambda x: supported_types.index(type(x))))
-        elements = [most_complex_type(e) for e in elements]
-        return Vector[most_complex_type](elements)
+    def of(*elements) -> 'Vector':
+        elements = (_most_appropriate_cast(e, supported_types)
+                    for e in elements)
+
+        appropriate_to_all_type = max(
+            (type(e) for e in elements),
+            key=lambda t: supported_types.index(t)
+        )
+
+        elements = map(appropriate_to_all_type, elements)
+        return Vector[appropriate_to_all_type](elements)
 
     def __init__(self, elements: Sequence[T]):
         self.elements = list(elements)
