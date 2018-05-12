@@ -21,7 +21,7 @@ def process(file):
     print('count = %d' % count)
     mean = sum / count
     print('mean = %.2f' % mean)
-    std_dev = sqrt((sum_squares - 2 * sum * mean + count * mean ** 2) / (count - 1))
+    std_dev = sqrt(sum_squares / count - mean ** 2)
     print('std_dev = %.2f' % std_dev)
 
 
