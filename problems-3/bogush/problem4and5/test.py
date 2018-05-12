@@ -1,5 +1,3 @@
-from itertools import chain
-
 from vector import Vector
 from unittest import main, TestCase
 
@@ -73,7 +71,7 @@ class VectorTest(TestCase):
         self.assert_all_of_type(v.elements, complex)
         v = Vector.of('1.', 2j)
         self.assert_all_of_type(v.elements, complex)
-        v = Vector.of(1, 2.,'3j')
+        v = Vector.of(1, 2., '3j')
         self.assert_all_of_type(v.elements, complex)
         v = Vector.of(1j, 2., '3')
         self.assert_all_of_type(v.elements, complex)
@@ -83,7 +81,7 @@ class VectorTest(TestCase):
         self.assertRaises(TypeError, lambda: Vector.of('asdf'))
         self.assertRaises(TypeError, lambda: Vector.of({1}))
         self.assertRaises(TypeError, lambda: Vector.of([1]))
-        self.assertRaises(TypeError, lambda: Vector.of({1:2}))
+        self.assertRaises(TypeError, lambda: Vector.of({1: 2}))
 
     def test_vector_add(self):
         self.assertEqual(Vector.of(1) + Vector.of(2), Vector.of(3))
@@ -105,6 +103,7 @@ class VectorTest(TestCase):
         self.assertEqual(Vector.of(1j) * 1j, Vector.of(-1+0j))
         self.assertEqual(Vector.of(1j) * 2j, Vector.of(-2+0j))
         self.assertEqual(Vector.of(3j) * 2j, Vector.of(-6+0j))
+
 
 if __name__ == '__main__':
     main()
