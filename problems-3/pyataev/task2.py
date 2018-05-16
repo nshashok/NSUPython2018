@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-import sys, re, math, subprocess
+import sys, re, math, subprocess, heapq
 
 def count(file):
     average = 0
@@ -14,9 +14,9 @@ def count(file):
     elif sys.platform == "win32":
         lines_num = int(re.search('(\d+)', str(subprocess.Popen(["find", "/c", "open", file.name], stdout=subprocess.PIPE).stdout.read())).group(0)) - 1 # не проверено
 
-    decil_size = lines_num // 10
-    decil_size = decil_size if decil_size != 0 else 1
-    decil = [-1] * decil_size # при при предположении, что считываемые числа - значения времени > 0
+    decil_size = int(math.ceil(lines_num / 10))
+    decil = [-1] * decil_size
+    heapq.heapify(decil)
 
     for line in file:
         if line.startswith("open"):
@@ -29,10 +29,9 @@ def count(file):
         if result:
             value = int(result.group(1))
             average += value
-            lmin = min(decil)
-            if lmin < value:
-                decil.insert(decil.index(lmin), value)
-                decil.remove(lmin)
+
+            if value > decil[0]:
+                heapq.heappushpop(decil, value)
             num += 1
 
     if num > 0:
@@ -40,7 +39,7 @@ def count(file):
     else:
         return None
 
-    return average, min(decil)
+    return average, decil[0]
 
 if __name__ == "__main__":
     if(len(sys.argv) < 2):
