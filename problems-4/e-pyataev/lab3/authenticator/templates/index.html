@@ -1,0 +1,19 @@
+<link rel="stylesheet" href="/static/style.css" type="text/css">
+{% block body %}
+
+	<div class="login">
+		<div class="login-screen">
+			<div class="app-title">
+				<h1>Hello, {{ username }}!</h1>
+				<p>Users registered after you:</p>
+  			{% for username in usernames %}
+      	<p>{{ username[0] }}</p>
+  			{% endfor %}
+				<form action="/logout" method="POST">
+					<input type="submit" value="Log out" class="btn btn-primary btn-large btn-block" >
+				</form>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
