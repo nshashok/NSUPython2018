@@ -8,6 +8,7 @@ from tkinter import Canvas
 from tkinter import Tk
 from tkinter import filedialog
 from tkinter import messagebox
+from tkinter import Scale, HORIZONTAL
 from tkinter import W, N
 
 
@@ -220,8 +221,9 @@ class GameOfLife:
         self.btn_s = Button(self.buttons, text="Остановить", command=self.stop_game)
         self.btn_с = Button(self.buttons, text="Очистить", command=self.clear)
         self.btn_o = Button(self.buttons, text="Открыть конфиг", command=self.open_file)
+        self.scale = Scale(self.buttons, orient=HORIZONTAL, length=300, from_=0.05, to=1, tickinterval=0.1,
+                           resolution=0.05)
         self._g = None
-        self.sleep_time = 1
 
         self.canvas.grid(row=0, column=0, padx=20, sticky=N)
         self.buttons.grid(row=0, column=1, padx=20, pady=20, sticky=N)
@@ -230,6 +232,8 @@ class GameOfLife:
         self.btn_s.grid(row=2, column=0, padx=20, sticky=W+N)
         self.btn_с.grid(row=3, column=0, padx=20, sticky=W+N)
         self.btn_o.grid(row=4, column=0, padx=20, sticky=W+N)
+
+        self.scale.grid(row=5, column=0, padx=20, sticky=W+N)
         self.canvas.bind("<Button-1>", self.change_color)
         self.create_field()
         self.frame.pack()
@@ -293,8 +297,8 @@ class GameOfLife:
 
     def do_step_overtime(self):
         self.do_step()
-        time.sleep(self.sleep_time)
-        self._g = self.master.after(self.sleep_time, self.do_step_overtime)
+        time.sleep(self.scale.get())
+        self._g = self.master.after(10, self.do_step_overtime)
 
     def stop_game(self):
         if self._g is not None:
