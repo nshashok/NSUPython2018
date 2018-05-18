@@ -21,7 +21,7 @@ class Vector(object):
 							pass
 						
 					if (isinstance(num, mtype)):
-						index = mytypes.index(mtype)
+						index = max(mytypes.index(mtype), index)
 						break
 
 			dominant_type = int
