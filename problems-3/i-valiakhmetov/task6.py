@@ -18,7 +18,7 @@ class Vector(object):
 						try:
 							num = mtype(num)
 						except:
-							print("fuck")
+							pass
 						
 					if (isinstance(num, mtype)):
 						index = mytypes.index(mtype)
