@@ -18,8 +18,8 @@ class RLEConfigures:
         self.comment = ''
         self.name = ''
         self.origin = ''
-        self.born = [2, 3]
-        self.survive = [3, 3]
+        self.born = [3, 3]
+        self.survive = [2, 3]
         self.alive = 'o'
         self.dead = 'b'
         self.end_line = '$'
@@ -32,8 +32,8 @@ class RLEConfigures:
         self.comment = ''
         self.name = ''
         self.origin = ''
-        self.born = [2, 3]
-        self.survive = [3]
+        self.born = [3, 3]
+        self.survive = [2, 3]
         self.alive = 'o'
         self.dead = 'b'
         self.end_line = '$'
