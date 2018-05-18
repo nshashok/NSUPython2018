@@ -28,7 +28,7 @@ class Vector(object):
 				dominant_type = mytypes[index]
 			else:
 				raise TypeError("Invalid type")
-			self._vector = list(map(mtype, self._vector))
+			self._vector = list(map(dominant_type, self._vector))
 			self._dim = len(self._vector)
 		else:
 			raise TypeError("Invalid type")
