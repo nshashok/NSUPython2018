@@ -8,7 +8,7 @@ from tkinter import Canvas
 from tkinter import Tk
 from tkinter import filedialog
 from tkinter import messagebox
-from tkinter import Scale, HORIZONTAL
+from tkinter import Scale, HORIZONTAL, Label
 from tkinter import W, N
 
 
@@ -224,6 +224,7 @@ class GameOfLife:
         self.btn_cmnt = Button(self.buttons, text="Комментарий", command=self.show_comment)
         self.btn_n = Button(self.buttons, text="Название", command=self.show_name)
         self.btn_orig = Button(self.buttons, text="Origin", command=self.show_origin)
+        self.label_speed = Label(self.buttons, text="Скорость", font='size, 14')
         self.scale = Scale(self.buttons, orient=HORIZONTAL, length=300, from_=0.05, to=1, tickinterval=0.1,
                            resolution=0.05)
         self._g = None
@@ -239,8 +240,8 @@ class GameOfLife:
         self.btn_n.grid(row=7, column=0, padx=20, sticky=W+N)
         self.btn_orig.grid(row=8, column=0, padx=20, sticky=W+N)
         self.btn_cmnt.grid(row=9, column=0, padx=20, sticky=W+N)
-
-        self.scale.grid(row=5, column=0, padx=20, sticky=W+N)
+        self.label_speed.grid(row=5, column=0, padx=20, sticky=W+N)
+        self.scale.grid(row=6, column=0, padx=20, sticky=W+N)
         self.canvas.bind("<Button-1>", self.change_color)
         self.create_field()
         self.frame.pack()
