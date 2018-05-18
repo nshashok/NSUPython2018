@@ -244,10 +244,12 @@ class GameOfLife:
         self.rectangles = []
         #self.canvas.setvar("height", self.cell_size * (self.reader.height + 2))
         #self.canvas.setvar("width", self.cell_size * (self.reader.width + 2))
-        self.canvas = Canvas(self.frame, width=self.cell_size * (self.reader.width + 2),
-                             height=self.cell_size * (self.reader.height + 2))
-        self.canvas.grid(row=0, column=0, padx=20, sticky=N)
-        self.canvas.bind("<Button-1>", self.change_color)
+        self.canvas.config(width=self.cell_size * (self.reader.width + 2),
+                           height=self.cell_size * (self.reader.height + 2))
+        #self.canvas = Canvas(self.frame, width=self.cell_size * (self.reader.width + 2),
+        #                     height=self.cell_size * (self.reader.height + 2))
+        #self.canvas.grid(row=0, column=0, padx=20, sticky=N)
+        #self.canvas.bind("<Button-1>", self.change_color)
         for j in range(self.reader.width):
             self.rectangles.append([])
             for i in range(self.reader.height):
