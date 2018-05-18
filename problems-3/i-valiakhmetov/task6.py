@@ -5,55 +5,29 @@ import collections
 
 class Vector(object):
 	"""My Vector class for n-dimensional math vector"""
-	
-	def __is_int(self, num):
-		try:
-			int(num)
-			return True
-		except ValueError:
-			return False
-
-	def __is_float(self, num):
-		try:
-			float(num)
-			return True
-		except ValueError:
-			return False
-
-	def __is_complex(self, num):
-		try:
-			complex(num)
-			return True
-		except ValueError:
-			return False
 
 	def __setVector(self, v):
-		m = 0
-		mtype = int
+		index = -1
+		mytypes = (int, float, complex)
 		if (isinstance(v, types.GeneratorType) or
 			isinstance(v, collections.Collection)):
 			self._vector = list(v)
 			for num in self._vector:
-				if (isinstance(num, str)):
-					if self.__is_int(num):
-						num = int(num)
-					elif self.__is_float(num):
-						num = float(num)
-					elif self.__is_complex(num):
-						num = complex(num)
-					else:
-						raise TypeError("Invalid type")
-
-				if (isinstance(num, int)):
-					pass
-				elif (isinstance(num, float) and m < 1):
-					mtype = float
-					m = 1
-				elif (isinstance(num, complex)):
-					mtype = complex
-					m = 2
-				else:
-					raise TypeError("Invalid type")
+				for mtype in mytypes:
+					if (isinstance(num, str)):
+						try:
+							num = mtype(num)
+						except:
+							print("fuck")
+						
+					if (isinstance(num, mtype)):
+						index = mytypes.index(mtype)
+						break
+			dominant_type = int
+			if index >= 0:
+				dominant_type = mytypes[index]
+			else:
+				raise TypeError("Invalid type")
 			self._vector = list(map(mtype, self._vector))
 			self._dim = len(self._vector)
 		else:
