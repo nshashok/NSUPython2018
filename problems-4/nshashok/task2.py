@@ -221,6 +221,9 @@ class GameOfLife:
         self.btn_s = Button(self.buttons, text="Остановить", command=self.stop_game)
         self.btn_с = Button(self.buttons, text="Очистить", command=self.clear)
         self.btn_o = Button(self.buttons, text="Открыть конфиг", command=self.open_file)
+        self.btn_cmnt = Button(self.buttons, text="Комментарий", command=self.show_comment)
+        self.btn_n = Button(self.buttons, text="Название", command=self.show_name)
+        self.btn_orig = Button(self.buttons, text="Origin", command=self.show_origin)
         self.scale = Scale(self.buttons, orient=HORIZONTAL, length=300, from_=0.05, to=1, tickinterval=0.1,
                            resolution=0.05)
         self._g = None
@@ -232,6 +235,10 @@ class GameOfLife:
         self.btn_s.grid(row=2, column=0, padx=20, sticky=W+N)
         self.btn_с.grid(row=3, column=0, padx=20, sticky=W+N)
         self.btn_o.grid(row=4, column=0, padx=20, sticky=W+N)
+
+        self.btn_n.grid(row=7, column=0, padx=20, sticky=W+N)
+        self.btn_orig.grid(row=8, column=0, padx=20, sticky=W+N)
+        self.btn_cmnt.grid(row=9, column=0, padx=20, sticky=W+N)
 
         self.scale.grid(row=5, column=0, padx=20, sticky=W+N)
         self.canvas.bind("<Button-1>", self.change_color)
@@ -319,6 +326,15 @@ class GameOfLife:
                 self.read_config_file(filename)
             except:
                 messagebox.showerror("Ошибка", "Не получилось открыть файл: %s\n"%filename)
+
+    def show_origin(self):
+        messagebox.showinfo("Origin", self.reader.origin)
+
+    def show_comment(self):
+        messagebox.showinfo("Комментарий", self.reader.comment)
+
+    def show_name(self):
+        messagebox.showinfo("Имя", self.reader.name)
 
 
 if __name__ == "__main__":
