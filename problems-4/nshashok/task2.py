@@ -10,10 +10,10 @@ from tkinter import filedialog
 from tkinter import messagebox
 from tkinter import Scale, HORIZONTAL, Label
 from tkinter import W, N
+from copy import copy
 
 
 class RLEConfigures:
-
     def __init__(self):
         self.comment = ''
         self.name = ''
@@ -24,8 +24,8 @@ class RLEConfigures:
         self.dead = 'b'
         self.end_line = '$'
         self.end_file = '!'
-        self.width = 30
-        self.height = 30
+        self.width = 60
+        self.height = 60
         self.field = set()
 
     def read_config(self, filename: str):
@@ -38,6 +38,8 @@ class RLEConfigures:
         self.dead = 'b'
         self.end_line = '$'
         self.end_file = '!'
+        self.width = 60
+        self.height = 60
         mode = '#'
         with open(filename, "r") as file:
             line = ' '
@@ -57,7 +59,7 @@ class RLEConfigures:
                         rules = line[3:].split('/')
                         self.born = [int(b) for b in rules[0]]
                         self.survive = [int(s) for s in rules[1]]
-                    # do rules
+                        # do rules
                 elif line.startswith("#"):
                     raise ValueError("Comments should be at the beginning of the config file")
                 else:
@@ -70,12 +72,12 @@ class RLEConfigures:
             self.survive.append(self.survive[0])
 
     def print(self):
-        for i in range (0, self.height):
-            for j in range (0, self.width):
+        for i in range(0, self.height):
+            for j in range(0, self.width):
                 if (i, j) in self.field:
-                    print("o",end='')
+                    print("o", end='')
                 else:
-                    print("*",end='')
+                    print("*", end='')
             print()
         print()
 
@@ -84,9 +86,9 @@ class RLEConfigures:
         rules = [x.split(" = ") for x in lines[0].split(", ")]
         for rule in rules:
             if rule[0] == 'x':
-                self.width = int(rule[1])
+                pass
             elif rule[0] == 'y':
-                self.height = int(rule[1])
+                pass
             elif rule[0] == 'rule':
                 born_survive = rule[1].split('/')
                 for b_s in born_survive:
@@ -97,7 +99,7 @@ class RLEConfigures:
                     else:
                         raise ValueError("Unknown rule:", b_s[0])
         lines = ("".join(lines[1:]).split("!"))[0].split("$")
-        regex = re.compile(r"(\d*[a-z])")
+        regex = re.compile(r'(\d*[a-z])')
         self.field = set()
         for line in enumerate(lines):
             a = 0
@@ -116,44 +118,27 @@ class RLEConfigures:
         pass
 
     def is_dead(self, row: int, col: int):
-        if 0 > row >= self.height:
-            return True
-        if 0 > col >= self.width:
-            return True
         if (row, col) not in self.field:
             return True
         return False
 
     def is_alive(self, row: int, col: int):
-        if 0 > row >= self.height:
-            return False
-        if 0 > col >= self.width:
-            return False
         if (row, col) in self.field:
             return True
         return False
 
-    def set_alive(self, row: int, col: int, field):
-        if 0 > row >= self.height:
-            return
-        if 0 > col >= self.width:
-            return
+    @staticmethod
+    def set_alive(row: int, col: int, field):
         if (row, col) not in field:
             field.add((row, col))
 
-    def set_dead(self, row: int, col: int, field: set):
-        if 0 < row >= self.height:
-            return
-        if 0 < col >= self.width:
-            return
+    @staticmethod
+    def set_dead(row: int, col: int, field: set):
         if (row, col) in field:
             field.remove((row, col))
 
-    def switch_status(self, row: int, col: int, field: set):
-        if 0 < row >= self.height:
-            return
-        if 0 < col >= self.width:
-            return
+    @staticmethod
+    def switch_status(row: int, col: int, field: set):
         if (row, col) in field:
             field.remove((row, col))
         else:
@@ -163,58 +148,37 @@ class RLEConfigures:
         self.field = set()
 
     def do_step(self):
-        field = set()
+        oldf = copy(self.field)
+        test_field = {}
 
-        for i in range(0, self.height):
-            for j in range(0, self.width):
-                tos = 0
+        for i, j in self.field:
+            test_field[(i - 1, j)] = test_field.get((i - 1, j), 0) + 1
+            test_field[(i - 1, j - 1)] = test_field.get((i - 1, j - 1), 0) + 1
+            test_field[(i - 1, j + 1)] = test_field.get((i - 1, j + 1), 0) + 1
+            test_field[(i + 1, j)] = test_field.get((i + 1, j), 0) + 1
+            test_field[(i + 1, j - 1)] = test_field.get((i + 1, j - 1), 0) + 1
+            test_field[(i + 1, j + 1)] = test_field.get((i + 1, j + 1), 0) + 1
+            test_field[(i, j - 1)] = test_field.get((i, j - 1), 0) + 1
+            test_field[(i, j + 1)] = test_field.get((i, j + 1), 0) + 1
 
-                if ((i - 1 + self.height) % self.height,
-                    (j - 1 + self.width) % self.width) in self.field:
-                    tos += 1
-                if ((i - 1 + self.height) % self.height,
-                    (j + 1) % self.width) in self.field:
-                    tos += 1
-                if ((i - 1 + self.height) % self.height,
-                    j) in self.field:
-                    tos += 1
-                if ((i + 1 + self.height) % self.height,
-                    (j - 1 + self.width) % self.width) in self.field:
-                    tos += 1
-                if ((i + 1 + self.height) % self.height,
-                    (j + 1) % self.width) in self.field:
-                    tos += 1
-                if ((i + 1 + self.height) % self.height,
-                    (j) % self.width) in self.field:
-                    tos += 1
-                if ((i),
-                    (j - 1 + self.width) % self.width) in self.field:
-                    tos += 1
-                if ((i),
-                    (j + 1) % self.width) in self.field:
-                    tos += 1
-                if self.is_dead(i, j) and self.born[0] <= tos <= self.born[1]:
-                    self.set_alive(i, j, field)
-                elif self.is_alive(i, j) and self.survive[0] <= tos <= self.survive[1]:
-                    self.set_alive(i, j, field)
-                else:
-                    self.set_dead(i, j, field)
-        self.field = field
+        self.field = set([x for x in test_field if (self.survive[0] <= test_field[x] <= self.survive[1] and x in oldf)
+                          or (self.born[0] <= test_field[x] <= self.born[1] and x not in oldf)])
 
 
 class GameOfLife:
-
     def __init__(self, master):
         self.reader = RLEConfigures()
         self.master = master
-        self.frame = Frame(self.master, width = 1000, height = 1000)
+        self.frame = Frame(self.master, width=1000, height=1000)
         self.buttons = Frame(self.frame)
-        self.cell_size = 20
+        self.cell_size = 10
         self.alive_color = "green"
         self.dead_color = "white"
+        self.adjx = 0
+        self.adjy = 0
         self.rectangles = []
-        self.canvas = Canvas(self.frame, width = self.cell_size * (self.reader.width + 2),
-                             height = self.cell_size * (self.reader.height + 2))
+        self.canvas = Canvas(self.frame, width=self.cell_size * (self.reader.width + 2),
+                             height=self.cell_size * (self.reader.height + 2))
 
         self.btn = Button(self.buttons, text="Шаг", command=self.do_step)
         self.btn_g = Button(self.buttons, text="Играть", command=self.do_step_overtime)
@@ -231,21 +195,24 @@ class GameOfLife:
 
         self.canvas.grid(row=0, column=0, padx=20, sticky=N)
         self.buttons.grid(row=0, column=1, padx=20, pady=20, sticky=N)
-        self.btn.grid(row=0, column=0, padx=20, sticky=W+N)
-        self.btn_g.grid(row=1, column=0, padx=20, sticky=W+N)
-        self.btn_s.grid(row=2, column=0, padx=20, sticky=W+N)
-        self.btn_с.grid(row=3, column=0, padx=20, sticky=W+N)
-        self.btn_o.grid(row=4, column=0, padx=20, sticky=W+N)
+        self.btn.grid(row=0, column=0, padx=20, sticky=W + N)
+        self.btn_g.grid(row=1, column=0, padx=20, sticky=W + N)
+        self.btn_s.grid(row=2, column=0, padx=20, sticky=W + N)
+        self.btn_с.grid(row=3, column=0, padx=20, sticky=W + N)
+        self.btn_o.grid(row=4, column=0, padx=20, sticky=W + N)
 
-        self.btn_n.grid(row=7, column=0, padx=20, sticky=W+N)
-        self.btn_orig.grid(row=8, column=0, padx=20, sticky=W+N)
-        self.btn_cmnt.grid(row=9, column=0, padx=20, sticky=W+N)
-        self.label_speed.grid(row=5, column=0, padx=20, sticky=W+N)
-        self.scale.grid(row=6, column=0, padx=20, sticky=W+N)
+        self.btn_n.grid(row=7, column=0, padx=20, sticky=W + N)
+        self.btn_orig.grid(row=8, column=0, padx=20, sticky=W + N)
+        self.btn_cmnt.grid(row=9, column=0, padx=20, sticky=W + N)
+        self.label_speed.grid(row=5, column=0, padx=20, sticky=W + N)
+        self.scale.grid(row=6, column=0, padx=20, sticky=W + N)
         self.canvas.bind("<Button-1>", self.change_color)
+        self.master.bind("<Left>", self.move_left)
+        self.master.bind("<Right>", self.move_right)
+        self.master.bind("<Up>", self.move_up)
+        self.master.bind("<Down>", self.move_down)
         self.create_field()
         self.frame.pack()
-        # self.read_config_file("config.rle")
 
     def read_config_file(self, filename: str):
         self.reader.read_config(filename)
@@ -254,25 +221,19 @@ class GameOfLife:
     def create_field(self):
         self.canvas.delete("all")
         self.rectangles = []
-        #self.canvas.setvar("height", self.cell_size * (self.reader.height + 2))
-        #self.canvas.setvar("width", self.cell_size * (self.reader.width + 2))
         self.canvas.config(width=self.cell_size * (self.reader.width + 2),
                            height=self.cell_size * (self.reader.height + 2))
-        #self.canvas = Canvas(self.frame, width=self.cell_size * (self.reader.width + 2),
-        #                     height=self.cell_size * (self.reader.height + 2))
-        #self.canvas.grid(row=0, column=0, padx=20, sticky=N)
-        #self.canvas.bind("<Button-1>", self.change_color)
         for j in range(self.reader.width):
             self.rectangles.append([])
             for i in range(self.reader.height):
-                if self.reader.is_alive(i, j):
+                if self.reader.is_alive(i - self.adjy, j - self.adjx):
                     color = self.alive_color
                 else:
                     color = self.dead_color
                 rect = self.canvas.create_rectangle(self.cell_size * (j + 1),
-                                                   self.cell_size * (i + 1),
-                                                   self.cell_size * (j + 2),
-                                                   self.cell_size * (i + 2), fill=color)
+                                                    self.cell_size * (i + 1),
+                                                    self.cell_size * (j + 2),
+                                                    self.cell_size * (i + 2), fill=color)
                 self.rectangles[j].append(rect)
 
     def find_rect_coords(self, x, y):
@@ -283,25 +244,65 @@ class GameOfLife:
         try:
             ix = int(x / self.cell_size - 1)
             iy = int(y / self.cell_size - 1)
-            self.reader.switch_status(iy, ix, self.reader.field)
-            if self.reader.is_alive(iy, ix):
-                color = self.alive_color
-            else:
-                color = self.dead_color
-            self.canvas.itemconfig(self.rectangles[ix][iy], fill=color)
+            if self.reader.height > iy >= 0 and self.reader.width > ix >= 0:
+                self.reader.switch_status(iy - self.adjy, ix - self.adjx, self.reader.field)
+                if self.reader.is_alive(iy - self.adjy, ix - self.adjx):
+                    color = self.alive_color
+                else:
+                    color = self.dead_color
+                self.canvas.itemconfig(self.rectangles[ix][iy], fill=color)
+                print(self.reader.field)
         except IndexError as e:
             print(e)
             return
+
+    def move_left(self, event):
+        self.unpaint()
+        self.adjx += 1
+        self.paint()
+        pass
+
+    def move_right(self, event):
+        self.unpaint()
+        self.adjx -= 1
+        self.paint()
+        pass
+
+    def move_up(self, event):
+        self.unpaint()
+        self.adjy += 1
+        self.paint()
+
+    def move_down(self, event):
+        self.unpaint()
+        self.adjy -= 1
+        self.paint()
+
+    def paint(self):
+        for i, j in self.reader.field:
+            if self.reader.height > i + self.adjy >= 0 and self.reader.width > j + self.adjx >= 0:
+                self.canvas.itemconfig(self.rectangles[j + self.adjx][i + self.adjy], fill=self.alive_color)
+                print('painted:', j + self.adjx, i + self.adjy)
+                print(self.adjx, self.adjy)
+
+    def unpaint(self):
+        for i, j in self.reader.field:
+            if self.reader.height > i + self.adjy >= 0 and self.reader.width > j + self.adjx >= 0:
+                self.canvas.itemconfig(self.rectangles[j + self.adjx][i + self.adjy], fill=self.dead_color)
+                print('unpainted:', j + self.adjx, i + self.adjy)
+                print(self.adjx, self.adjy)
 
     def do_step(self):
         old_field = self.reader.field
         self.reader.do_step()
         new_field = self.reader.field
-        for elem in old_field:
-            self.canvas.itemconfig(self.rectangles[elem[1]][elem[0]], fill=self.dead_color)
-        for elem in new_field:
-            self.canvas.itemconfig(self.rectangles[elem[1]][elem[0]], fill=self.alive_color)
+        for i, j in old_field:
+            if self.reader.height > i + self.adjy >= 0 and self.reader.width > j + self.adjx >= 0:
+                self.canvas.itemconfig(self.rectangles[j + self.adjx][i + self.adjy], fill=self.dead_color)
 
+        for i, j in new_field:
+            if self.reader.height > i + self.adjy >= 0 and self.reader.width > j + self.adjx >= 0:
+                self.canvas.itemconfig(self.rectangles[j + self.adjx][i + self.adjy], fill=self.alive_color)
 
     def do_step_overtime(self):
         self.do_step()
@@ -314,10 +315,8 @@ class GameOfLife:
             self._g = None
 
     def clear(self):
-        old_field = self.reader.field
+        self.unpaint()
         self.reader.clear()
-        for elem in old_field:
-            self.canvas.itemconfig(self.rectangles[elem[1]][elem[0]], fill=self.dead_color)
 
     def open_file(self):
         filename = filedialog.askopenfilename(filetypes=(("RLE config", "*.rle"),
@@ -325,8 +324,9 @@ class GameOfLife:
         if filename:
             try:
                 self.read_config_file(filename)
+                self.paint()
             except:
-                messagebox.showerror("Ошибка", "Не получилось открыть файл: %s\n"%filename)
+                messagebox.showerror("Ошибка", "Не получилось открыть файл: %s\n" % filename)
 
     def show_origin(self):
         messagebox.showinfo("Origin", self.reader.origin)
