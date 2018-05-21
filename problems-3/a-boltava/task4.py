@@ -1,4 +1,5 @@
 import collections
+import numbers
 import types
 from typing import Union
 
@@ -18,6 +19,7 @@ class Vector:
 
         :param content: list of numbers - vector coordinates
         """
+        self.__valid_types_ordered = (int, float, complex)
         self.content = []
         self.__length = 0
 
@@ -38,43 +40,32 @@ class Vector:
         self.__init_from_iterable(iterable)
 
     def __init_from_iterable(self, iterable):
-
-        def try_number_cast(e):
-            try:
-                result = float(e)
-                int_result = int(result)
-                if result - int_result == 0.0:
-                    result = int_result
-            except:
+        def try_number_cast(element):
+            for t in self.__valid_types_ordered:
                 try:
-                    result = complex(e)
+                    return t(element)
                 except:
-                    result = None
+                    pass
+            raise TypeError("Element {} of type {} is not convertible to number".format(element, type(element)))
 
-            return result
+        def get_final_type(found_types):
+            for t in reversed(self.__valid_types_ordered):
+                if t in found_types:
+                    return t
+            return None
 
-        type_weights = {
-            int: 1,
-            float: 2,
-            complex: 3
-        }
+        found_types = set()
 
-        final_type = int
-        max_weight = type_weights[final_type]
+        for e in iterable:
+            if isinstance(e, numbers.Number):
+                found_types.add(type(e))
+            else:
+                converted = try_number_cast(e)
+                found_types.add(type(converted))
 
-        for raw_element in iterable:
-            element = try_number_cast(raw_element)
-            if element is None:
-                raise TypeError("{} is not convertible to number".format(repr(raw_element)))
+        final_type = get_final_type(found_types)
 
-            type_weight = type_weights[type(element)]
-            if type_weight > max_weight:
-                max_weight = type_weight
-                final_type = type(element)
-
-            self.content.append(element)
-
-        self.content = [final_type(e) for e in self.content]
+        self.content = [final_type(e) for e in iterable]
         self.__length = len(self.content)
 
     @staticmethod
