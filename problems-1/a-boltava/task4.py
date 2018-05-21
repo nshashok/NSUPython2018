@@ -1,6 +1,7 @@
 import sys
 import os
 
+
 def get_files_list(path: str):
     files = []
 
@@ -20,7 +21,7 @@ if __name__ == '__main__':
             for file_name, file_size in get_files_list(sys.argv[1]):
                 print(file_name, file_size)
         except Exception as e:
-            print(e)
+            print(e, file=sys.stderr)
     else:
         print("Usage: python {0} path".format(sys.argv[0]))
         print("path - path to scan for files")
