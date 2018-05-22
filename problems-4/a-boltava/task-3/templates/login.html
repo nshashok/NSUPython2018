@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Flask app</title>
+        <link rel="stylesheet" type="text/css" href="static/main.css" />
+    </head>
+  <body>
+    <nav>
+        {% if logged_in %}
+        <a href="/logout">Logout</a>
+        {% endif %}
+    </nav>
+    <div>
+      {% if reason %}
+        <p>{{ reason }}</p>
+      {% endif %}
+    </div>
+    {% if purpose == "login" %}
+    <form method="POST" action="/login">
+    {% else %}
+    <form method="POST" action="/register">
+    {% endif %}
+      <input type="text" name="username" placeholder="Username" required autofocus />
+      <input type="password" name="password" placeholder="Password" required />
+      {% if purpose != "login" %}
+      <input type="password" name="password_repeat" placeholder="Repeat Password" required />
+      {% endif %}
+
+    {% if purpose == "login" %}
+      <input type=submit value="Log in" />
+        <p>Don't have an account? <a href="/register">Register</a></p>
+    {% else %}
+      <input type=submit value="Register" />
+        <p>Already registered? <a href="/login">Log in</a></p>
+    {% endif %}
+    </form>
+  </body>
+</html>
