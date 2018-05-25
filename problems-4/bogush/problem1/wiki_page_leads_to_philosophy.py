@@ -87,6 +87,8 @@ EXCLUDED_CLASSES = {
     'dablink',
     'thumbinner',
     'metadata',
+    'hatnote',
+    'navigation-not-searchable',
 }
 
 
