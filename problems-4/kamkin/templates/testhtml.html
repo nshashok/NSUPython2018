@@ -1,0 +1,20 @@
+<!doctype html>
+<title>Hello from Flask</title>
+{% if name2 %}
+  <h1>Hello {{ name2 }}!</h1>
+{% else %}
+  <h1>Hello World!</h1>
+{% endif %}
+
+        <form action="" method="post">
+            <p><input type=text name=username>
+            <p><input type=submit value=Login>
+        </form>
+
+
+
+
+        <p><a>Users registered after you:</a>
+        {% for username in list_of_users %}
+        <p>{{ username }}</p>
+        {% endfor %}
