@@ -7,7 +7,7 @@
 				<h1>Hello, {{ username }}!</h1>
 				<p>Users registered after you:</p>
   			{% for username in usernames %}
-      	<p>{{ username[0] }}</p>
+      	<p>{{ username }}</p>
   			{% endfor %}
 				<form action="/logout" method="POST">
 					<input type="submit" value="Log out" class="btn btn-primary btn-large btn-block" >

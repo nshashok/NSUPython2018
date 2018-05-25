@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker
 from tabledef import *
 from werkzeug.security import generate_password_hash, check_password_hash
 
-engine = create_engine('sqlite:///users.db', echo=True)
+engine = create_engine('sqlite:///users.db')
 
 app = Flask(__name__)
 @app.route('/')
@@ -16,10 +16,9 @@ def home():
     else:
         Session = sessionmaker(bind=engine)
         s = Session()
-        usernames = list(s.execute("SELECT username FROM users WHERE id>:param", {"param":session['datetime']}))
-
-        if len(usernames) == 0: usernames.append(("You're the last registered user",))
-
+        usernames = [name.username for name in list(s.query(User).filter(User.id > session['datetime']))]
+        if len(usernames) == 0: usernames.append("You're the last registered user")
+        s.close()
         return render_template('index.html', username=session['username'], usernames=usernames)
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -37,6 +36,7 @@ def login():
         s = Session()
         query = s.query(User).filter_by(username=POST_USERNAME)
         result = query.first()
+        s.close()
         global corr
         if result:
             if result.check_password(POST_PASSWORD):
@@ -71,6 +71,7 @@ def register():
         query = s.query(User).filter_by(username=POST_USERNAME)
         result = query.first()
         if result:
+            s.close()
             return render_template('register.html', correct=False)
         else:
             user = User(POST_USERNAME, POST_PASSWORD)
@@ -79,8 +80,9 @@ def register():
             session['logged_in'] = True
             session['username'] = user.username
             session['datetime'] = user.id
+            s.close()
             return redirect('')
 
 if __name__ == "__main__":
     app.secret_key = os.urandom(12)
-    app.run(debug=True, port=3000)
+    app.run(host='0.0.0.0', port=5000)
