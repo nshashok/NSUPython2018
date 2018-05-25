@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <body>
+        {% if error %}
+          <h1>Error: {{ error }}!</h1>
+        {% else %}
+          <h1>Hello!</h1>
+        {% endif %}
+        <form action="" method="post">
+            <p><a>Username:</a>
+            <p><input type=text name=username>
+            <p><a>Password:</a>
+            <p><input type=password name=pass>
+            <p><input name="act" type="radio" value="login" checked> Login</p>
+            <p><input name="act" type="radio" value="register"> Register</p>
+            <p><input type=submit value=GO!>
+        </form>
+    </body>
+</html>
