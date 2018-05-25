@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Flask app</title>
+</head>
+<body>
+    <nav>
+        <a href="/logout">Logout</a>
+    </nav>
+    <div>
+        <h1>Hi, {{ username }}!</h1>
+
+
+        {% if user_list | length > 0 %}
+            Here's the list of users registered after you:
+            <ol>
+            {% for user in user_list %}
+                <li>{{ user.username }}</li>
+            {% endfor %}
+            </ol>
+        {% else %}
+            <p>No users have registered after you yet</p>
+        {% endif %}
+    </div>
+</body>
+</html>
