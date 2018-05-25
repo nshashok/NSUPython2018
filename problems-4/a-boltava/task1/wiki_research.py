@@ -145,4 +145,4 @@ if __name__ == '__main__':
         main(sys.argv[1])
     else:
         start_url = "https://ru.wikipedia.org/wiki/%D0%A1%D0%B0%D0%BC%D0%BE%D0%BB%D1%91%D1%82"
-        main(start_url)
+        main(random_eng_page_url)
