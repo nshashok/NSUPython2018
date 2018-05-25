@@ -23,6 +23,8 @@ class Test(TestCase):
             pathname2url('/wiki/Опытное_конструкторское_бюро'),
         urljoin('https://ru.wikipedia.org/wiki/', pathname2url('Философия')):
             pathname2url('/wiki/Познание'),
+        urljoin('https://ru.wikipedia.org/wiki/', pathname2url('Головной_убор')):
+            pathname2url('/wiki/Причёска'),
 
     }
 

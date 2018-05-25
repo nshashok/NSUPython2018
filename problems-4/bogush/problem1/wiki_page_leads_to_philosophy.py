@@ -52,7 +52,8 @@ def in_parentheses(tag: Tag) -> bool:
 
 EXCLUDED_LINK_CLASSES = {
     'new',
-    'mw-disambig'
+    'mw-disambig',
+    'image',
 }
 
 
@@ -60,6 +61,7 @@ def is_a_good_link(tag: Tag) -> bool:
     return (
         tag.name == 'a' and
         tag.has_attr('href') and
+        tag['href'].startswith('/') and
         tag.has_attr('title') and
         not (
             tag.has_attr('class') and
@@ -84,7 +86,7 @@ EXCLUDED_CLASSES = {
     'reference',
     'dablink',
     'thumbinner',
-    'metadata'
+    'metadata',
 }
 
 
