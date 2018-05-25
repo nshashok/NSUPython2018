@@ -2,6 +2,7 @@ import dbm
 import hashlib
 import codecs
 import sqlite3
+from xml.sax.saxutils import escape
 
 from flask import Flask, render_template, request, session, url_for
 from werkzeug.utils import redirect, escape
@@ -100,10 +101,17 @@ def hello(name1=None):
     return render_template('testhtml.html', name2=name1)
 
 
+def clear_username(username):
+    username = username.replace("&lt;", "<")
+    username = username.replace("&gt;", ">")
+    username = username.replace("&quot;", '"')
+    return username
+
 @app.route('/')
 def index():
     if 'username' in session:
         user = escape(session['username'])
+        user = clear_username(user)
         #user = user[2:-1]
         #user = user.decode('utf8', errors='ignore')
         lst = generate_list_by_user(user)
@@ -168,6 +176,7 @@ def hash_pass(password):
 
 if __name__ == '__main__':
     start_bd()
+    #print_all_users()
     app.secret_key = 'A0Zr98$vwfwfeEFD324LWX/,?RT'
     app.run(host='0.0.0.0')
 
