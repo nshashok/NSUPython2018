@@ -122,7 +122,7 @@ def good_link_parents(root: Tag):
 def first_good_link(wiki_page):
     soup = BeautifulSoup(
         wiki_page, 'html.parser')
-    root: Tag = soup.find(attrs={'class': 'mw-parser-output'})
+    root = soup.find(attrs={'class': 'mw-parser-output'})
     for parent in good_link_parents(root.find()):
         try:
             first_url = next(find_lazy(parent, is_a_good_link))
