@@ -8,13 +8,13 @@ def answerlist(n):
             n //= d
         else:
             if power > 0:
-                list = [d, power]
-                result.append(list)
+                m_list = [d, power]
+                result.append(m_list)
             d += 1
             power = 0
     if n > 1:
-        list = [n, power+1]
-        result.append(list)
+        m_list = [n, power+1]
+        result.append(m_list)
     return result
 
 
