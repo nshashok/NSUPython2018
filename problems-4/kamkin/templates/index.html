@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <body>
+        {% if user %}
+          <h1>Hello, dear {{ user }}!</h1>
+        {% else %}
+          <h1>Hello!</h1>
+        {% endif %}
+        <form action="/logout" method="get">
+            <p><input type=submit value=Logout>
+        </form>
+        <p><a>Users registered after you:</a>
+        {% for username in list_of_users %}
+        <p>{{ username }}</p>
+        {% endfor %}
+    </body>
+</html>

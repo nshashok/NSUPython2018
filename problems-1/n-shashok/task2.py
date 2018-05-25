@@ -8,6 +8,7 @@ def is_prime(n):
             return False
     return True
 
+
 if __name__ == "__main__":
     while True:
         try:

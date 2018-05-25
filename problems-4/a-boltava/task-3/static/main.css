@@ -1,0 +1,28 @@
+input[type='text'], input[type='password'] {
+    display: block;
+    /*width: 10rem;*/
+    /*height: 2rem;*/
+    font-size: 1.3rem;
+    padding: 4px;
+    margin-bottom: 5px;
+    border: 1px solid #dfdfdf;
+    color: #333;
+}
+
+input[type='submit'] {
+    font-size: 1.2rem;
+    color: white;
+    background: lightblue;
+    border: none;
+    padding: 5px;
+}
+
+input[type='submit']:hover {
+    cursor: pointer;
+    color: white;
+    background: #5063FB;
+}
+
+input::placeholder {
+    color: #777;
+}
